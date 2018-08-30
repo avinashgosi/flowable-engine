@@ -13,6 +13,8 @@
 package org.flowable.cmmn.converter.export;
 
 import org.apache.commons.lang3.StringUtils;
+import org.flowable.cmmn.converter.util.CmmnXmlUtil;
+import org.flowable.cmmn.model.CmmnModel;
 import org.flowable.cmmn.model.HumanTask;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -41,6 +43,14 @@ public class HumanTaskExport extends AbstractPlanItemDefinitionExport<HumanTask>
     @Override
     protected String getPlanItemDefinitionXmlElementValue(HumanTask planItemDefinition) {
         return ELEMENT_HUMAN_TASK;
+    }
+
+
+    @Override
+    protected void writePlanItemDefinitionBody(CmmnModel model, HumanTask humanTask, XMLStreamWriter xtw) throws Exception {
+        super.writePlanItemDefinitionBody(model, humanTask, xtw);
+
+        CmmnXmlUtil.writeExtensionElements(humanTask, false, xtw);
     }
 
     @Override

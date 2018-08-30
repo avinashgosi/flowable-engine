@@ -46,6 +46,7 @@ public interface CmmnXmlConstants {
     String ELEMENT_TASK = "task";
     String ELEMENT_HUMAN_TASK = "humanTask";
     String ELEMENT_CASE_TASK = "caseTask";
+    String ELEMENT_CASE_FILE_ITEM = "caseFileItem";
     String ELEMENT_PROCESS_TASK = "processTask";
     String ELEMENT_DECISION_TASK = "decisionTask";
     String ELEMENT_TIMER_EVENT_LISTENER = "timerEventListener";
@@ -91,6 +92,7 @@ public interface CmmnXmlConstants {
     String ATTRIBUTE_CASE_REF = "caseRef";
     String ATTRIBUTE_PROCESS_REF = "processRef";
     String ATTRIBUTE_DECISION_REF = "decisionRef";
+    String ATTRIBUTE_DEFINITION_TYPE = "definitiontype";
 
     String ELEMENT_PROCESS_REF_EXPRESSION = "processRefExpression";
     String ELEMENT_DECISION_REF_EXPRESSION = "decisionRefExpression";

@@ -38,6 +38,7 @@ public class PlanItemDefinitionExport implements CmmnXmlConstants {
         addPlanItemDefinitionExport(new MilestoneExport());
         addPlanItemDefinitionExport(new TimerEventListenerExport());
         addPlanItemDefinitionExport(new UserEventListenerExport());
+        addPlanItemDefinitionExport(new CaseFileItemExport());
     }
 
     public static void addPlanItemDefinitionExport(AbstractPlanItemDefinitionExport exporter) {
