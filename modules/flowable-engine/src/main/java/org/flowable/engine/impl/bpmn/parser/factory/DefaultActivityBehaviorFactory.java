@@ -21,6 +21,7 @@ import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.BusinessRuleTask;
 import org.flowable.bpmn.model.CallActivity;
 import org.flowable.bpmn.model.CancelEventDefinition;
+import org.flowable.bpmn.model.CaseTask;
 import org.flowable.bpmn.model.CompensateEventDefinition;
 import org.flowable.bpmn.model.EndEvent;
 import org.flowable.bpmn.model.ErrorEventDefinition;
@@ -64,6 +65,7 @@ import org.flowable.engine.impl.bpmn.behavior.BoundaryTimerEventActivityBehavior
 import org.flowable.engine.impl.bpmn.behavior.BusinessRuleTaskActivityBehavior;
 import org.flowable.engine.impl.bpmn.behavior.CallActivityBehavior;
 import org.flowable.engine.impl.bpmn.behavior.CancelEndEventActivityBehavior;
+import org.flowable.engine.impl.bpmn.behavior.CaseTaskActivityBehavior;
 import org.flowable.engine.impl.bpmn.behavior.DmnActivityBehavior;
 import org.flowable.engine.impl.bpmn.behavior.ErrorEndEventActivityBehavior;
 import org.flowable.engine.impl.bpmn.behavior.EventBasedGatewayActivityBehavior;
@@ -140,6 +142,11 @@ public class DefaultActivityBehaviorFactory extends AbstractBehaviorFactory impl
     @Override
     public ManualTaskActivityBehavior createManualTaskActivityBehavior(ManualTask manualTask) {
         return new ManualTaskActivityBehavior();
+    }
+
+    @Override
+    public CaseTaskActivityBehavior createCaseTaskActivityBehavior(CaseTask caseTaskTask) {
+        return new CaseTaskActivityBehavior();
     }
 
     @Override

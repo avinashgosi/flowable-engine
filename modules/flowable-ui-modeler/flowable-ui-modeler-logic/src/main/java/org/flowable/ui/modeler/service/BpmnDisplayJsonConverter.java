@@ -43,6 +43,7 @@ import org.flowable.bpmn.model.TimerEventDefinition;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.flowable.ui.modeler.domain.AbstractModel;
+import org.flowable.ui.modeler.service.mapper.CaseTaskInfoMapper;
 import org.flowable.ui.modeler.service.mapper.EventInfoMapper;
 import org.flowable.ui.modeler.service.mapper.InfoMapper;
 import org.flowable.ui.modeler.service.mapper.ReceiveTaskInfoMapper;
@@ -85,6 +86,7 @@ public class BpmnDisplayJsonConverter {
         propertyMappers.put("ServiceTask", new ServiceTaskInfoMapper());
         propertyMappers.put("ThrowEvent", new EventInfoMapper());
         propertyMappers.put("UserTask", new UserTaskInfoMapper());
+        propertyMappers.put("CaseTask", new CaseTaskInfoMapper());
     }
 
     public void processProcessElements(AbstractModel processModel, ObjectNode displayNode, GraphicInfo diagramInfo) {

@@ -159,10 +159,13 @@ public interface BpmnXMLConstants {
     public static final String ELEMENT_TASK_SERVICE = "serviceTask";
     public static final String ELEMENT_TASK_USER = "userTask";
     public static final String ELEMENT_CALL_ACTIVITY = "callActivity";
+    public static final String ELEMENT_TASK_CASE = "caseTask";
 
     public static final String ATTRIBUTE_EVENT_START_INITIATOR = "initiator";
     public static final String ATTRIBUTE_EVENT_START_INTERRUPTING = "isInterrupting";
     public static final String ATTRIBUTE_FORM_FORMKEY = "formKey";
+
+    public static final String ATTRIBUTE_CASE_REF = "caseRef";
 
     public static final String ELEMENT_MULTIINSTANCE = "multiInstanceLoopCharacteristics";
     public static final String ELEMENT_MULTIINSTANCE_CARDINALITY = "loopCardinality";

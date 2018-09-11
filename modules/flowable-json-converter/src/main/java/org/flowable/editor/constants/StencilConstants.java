@@ -46,6 +46,7 @@ public interface StencilConstants {
     final String STENCIL_TASK_SEND = "SendTask";
     final String STENCIL_TASK_SERVICE = "ServiceTask";
     final String STENCIL_TASK_USER = "UserTask";
+    final String STENCIL_TASK_CASE = "CaseTask";
     final String STENCIL_TASK_CAMEL = "CamelTask";
     final String STENCIL_TASK_MULE = "MuleTask";
     final String STENCIL_TASK_HTTP = "HttpTask";
@@ -244,6 +245,8 @@ public interface StencilConstants {
     final String PROPERTY_SEQUENCEFLOW_CONDITION = "conditionsequenceflow";
     final String PROPERTY_SEQUENCEFLOW_ORDER = "sequencefloworder";
     final String PROPERTY_FORM_REFERENCE = "formreference";
+
+    String PROPERTY_CASE_REFERENCE = "casetaskcasereference";
 
     final String PROPERTY_MESSAGE_DEFINITIONS = "messagedefinitions";
     final String PROPERTY_MESSAGE_DEFINITION_ID = "id";

@@ -135,6 +135,7 @@ import org.flowable.engine.impl.bpmn.parser.handler.BoundaryEventParseHandler;
 import org.flowable.engine.impl.bpmn.parser.handler.BusinessRuleParseHandler;
 import org.flowable.engine.impl.bpmn.parser.handler.CallActivityParseHandler;
 import org.flowable.engine.impl.bpmn.parser.handler.CancelEventDefinitionParseHandler;
+import org.flowable.engine.impl.bpmn.parser.handler.CaseTaskParseHandler;
 import org.flowable.engine.impl.bpmn.parser.handler.CompensateEventDefinitionParseHandler;
 import org.flowable.engine.impl.bpmn.parser.handler.EndEventParseHandler;
 import org.flowable.engine.impl.bpmn.parser.handler.ErrorEventDefinitionParseHandler;
@@ -1706,6 +1707,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         bpmnParserHandlers.add(new IntermediateCatchEventParseHandler());
         bpmnParserHandlers.add(new IntermediateThrowEventParseHandler());
         bpmnParserHandlers.add(new ManualTaskParseHandler());
+        bpmnParserHandlers.add(new CaseTaskParseHandler());
         bpmnParserHandlers.add(new MessageEventDefinitionParseHandler());
         bpmnParserHandlers.add(new ParallelGatewayParseHandler());
         bpmnParserHandlers.add(new ProcessParseHandler());
