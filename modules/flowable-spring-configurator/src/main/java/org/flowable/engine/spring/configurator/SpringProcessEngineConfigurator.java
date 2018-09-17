@@ -12,8 +12,10 @@
  */
 package org.flowable.engine.spring.configurator;
 
+import org.flowable.cmmn.spring.SpringCmmnEngineConfiguration;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.common.engine.impl.AbstractEngineConfiguration;
+import org.flowable.common.engine.impl.interceptor.EngineConfigurationConstants;
 import org.flowable.common.spring.SpringEngineConfiguration;
 import org.flowable.engine.ProcessEngine;
 import org.flowable.engine.configurator.ProcessEngineConfigurator;
@@ -43,6 +45,21 @@ public class SpringProcessEngineConfigurator extends ProcessEngineConfigurator {
         springProcessEngineConfiguration.setTransactionManager(springEngineConfiguration.getTransactionManager());
         springProcessEngineConfiguration.setExpressionManager(new SpringExpressionManager(
                         springEngineConfiguration.getApplicationContext(), springEngineConfiguration.getBeans()));
+
+
+        SpringCmmnEngineConfiguration springCmmnEngineConfiguration = null;
+        if (springEngineConfiguration instanceof SpringCmmnEngineConfiguration) {
+            springCmmnEngineConfiguration = (SpringCmmnEngineConfiguration) springEngineConfiguration;
+        } else {
+            AbstractEngineConfiguration cmmnEngineConfiguration = engineConfiguration.getEngineConfigurations().get(EngineConfigurationConstants.KEY_CMMN_ENGINE_CONFIG);
+            if (cmmnEngineConfiguration instanceof SpringCmmnEngineConfiguration) {
+                springCmmnEngineConfiguration = (SpringCmmnEngineConfiguration) cmmnEngineConfiguration;
+            }
+        }
+
+        if (springCmmnEngineConfiguration != null) {
+            copyProcessEngineProperties(springCmmnEngineConfiguration);
+        }
 
         initProcessEngine();
 

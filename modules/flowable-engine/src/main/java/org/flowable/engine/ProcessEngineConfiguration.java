@@ -25,6 +25,7 @@ import org.flowable.common.engine.impl.history.HistoryLevel;
 import org.flowable.common.engine.impl.runtime.Clock;
 import org.flowable.engine.cfg.HttpClientConfig;
 import org.flowable.engine.cfg.MailServerInfo;
+import org.flowable.engine.cmmn.CaseInstanceService;
 import org.flowable.engine.impl.cfg.StandaloneInMemProcessEngineConfiguration;
 import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.flowable.image.ProcessDiagramGenerator;
@@ -140,6 +141,8 @@ public abstract class ProcessEngineConfiguration extends AbstractEngineConfigura
 
     /** postprocessor for a task builder */
     protected TaskPostProcessor taskPostProcessor = null;
+
+    protected CaseInstanceService caseInstanceService;
 
     /** use one of the static createXxxx methods instead */
     protected ProcessEngineConfiguration() {
@@ -694,5 +697,14 @@ public abstract class ProcessEngineConfiguration extends AbstractEngineConfigura
 
     public void setTaskPostProcessor(TaskPostProcessor processor) {
         this.taskPostProcessor = processor;
+    }
+
+    public CaseInstanceService getCaseInstanceService(){
+        return this.caseInstanceService;
+    }
+
+    public ProcessEngineConfiguration setCaseInstanceService(CaseInstanceService caseInstanceService) {
+        this.caseInstanceService = caseInstanceService;
+        return this;
     }
 }
