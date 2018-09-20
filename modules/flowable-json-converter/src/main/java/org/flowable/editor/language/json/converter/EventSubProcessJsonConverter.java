@@ -71,7 +71,7 @@ public class EventSubProcessJsonConverter extends BaseBpmnJsonConverter implemen
     protected FlowElement convertJsonToElement(JsonNode elementNode, JsonNode modelNode, Map<String, JsonNode> shapeMap) {
         EventSubProcess subProcess = new EventSubProcess();
         JsonNode childShapesArray = elementNode.get(EDITOR_CHILD_SHAPES);
-        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model);
+        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model, null);
         return subProcess;
     }
 

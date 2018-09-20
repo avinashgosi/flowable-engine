@@ -385,7 +385,7 @@ public class AppDefinitionImportService {
                         decisionTableModel.getName(), decisionTableModel.getKey()));
             }
 
-            BpmnModel bpmnModel = bpmnJsonConverter.convertToBpmnModel(bpmnModelNode, oldFormIdFormKeyMap, oldDecisionTableIdDecisionTableKeyMap);
+            BpmnModel bpmnModel = bpmnJsonConverter.convertToBpmnModel(bpmnModelNode, oldFormIdFormKeyMap, oldDecisionTableIdDecisionTableKeyMap, null);
             String updatedBpmnJson = bpmnJsonConverter.convertToJson(bpmnModel, formKeyModelIdMap, decisionTableKeyModelIdMap).toString();
 
             Model updatedProcessModel = null;

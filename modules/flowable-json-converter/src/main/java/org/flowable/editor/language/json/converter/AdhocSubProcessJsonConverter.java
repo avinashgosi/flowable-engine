@@ -74,7 +74,7 @@ public class AdhocSubProcessJsonConverter extends BaseBpmnJsonConverter implemen
         subProcess.setOrdering(getPropertyValueAsString("ordering", elementNode));
         subProcess.setCancelRemainingInstances(getPropertyValueAsBoolean("cancelremaininginstances", elementNode));
         JsonNode childShapesArray = elementNode.get(EDITOR_CHILD_SHAPES);
-        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model);
+        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model, null);
         return subProcess;
     }
 

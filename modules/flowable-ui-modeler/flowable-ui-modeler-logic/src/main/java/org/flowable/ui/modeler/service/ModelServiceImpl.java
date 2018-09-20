@@ -545,6 +545,7 @@ public class ModelServiceImpl implements ModelService {
         try {
             Map<String, Model> formMap = new HashMap<>();
             Map<String, Model> decisionTableMap = new HashMap<>();
+            Map<String, Model> caseModelMap = new HashMap<>();
 
             List<Model> referencedModels = modelRepository.findByParentModelId(model.getId());
             for (Model childModel : referencedModels) {
@@ -553,10 +554,13 @@ public class ModelServiceImpl implements ModelService {
 
                 } else if (Model.MODEL_TYPE_DECISION_TABLE == childModel.getModelType()) {
                     decisionTableMap.put(childModel.getId(), childModel);
+                } else if (Model.MODEL_TYPE_CMMN == childModel.getModelType()) {
+                    caseModelMap.put(childModel.getId(), childModel);
+
                 }
             }
 
-            bpmnModel = getBpmnModel(model, formMap, decisionTableMap);
+            bpmnModel = getBpmnModel(model, formMap, decisionTableMap, caseModelMap);
 
         } catch (Exception e) {
             LOGGER.error("Could not generate BPMN 2.0 model for {}", model.getId(), e);
@@ -567,7 +571,7 @@ public class ModelServiceImpl implements ModelService {
     }
 
     @Override
-    public BpmnModel getBpmnModel(AbstractModel model, Map<String, Model> formMap, Map<String, Model> decisionTableMap) {
+    public BpmnModel getBpmnModel(AbstractModel model, Map<String, Model> formMap, Map<String, Model> decisionTableMap, Map<String, Model> caseModelMap) {
         try {
             ObjectNode editorJsonNode = (ObjectNode) objectMapper.readTree(model.getModelEditorJson());
             Map<String, String> formKeyMap = new HashMap<>();
@@ -580,7 +584,12 @@ public class ModelServiceImpl implements ModelService {
                 decisionTableKeyMap.put(decisionTableModel.getId(), decisionTableModel.getKey());
             }
 
-            return bpmnJsonConverter.convertToBpmnModel(editorJsonNode, formKeyMap, decisionTableKeyMap);
+            Map<String, String> caseKeyMap = new HashMap<>();
+            for (Model caseModel : caseModelMap.values()) {
+                caseKeyMap.put(caseModel.getId(), caseModel.getKey());
+            }
+
+            return bpmnJsonConverter.convertToBpmnModel(editorJsonNode, formKeyMap, decisionTableKeyMap, caseKeyMap);
 
         } catch (Exception e) {
             LOGGER.error("Could not generate BPMN 2.0 model for {}", model.getId(), e);
@@ -692,6 +701,7 @@ public class ModelServiceImpl implements ModelService {
                 // Relations
                 handleBpmnProcessFormModelRelations(model, jsonNode);
                 handleBpmnProcessDecisionTaskModelRelations(model, jsonNode);
+                handleCmmnCaseModelRelations(model, jsonNode);
 
             } else if (model.getModelType().intValue() == Model.MODEL_TYPE_CMMN) {
 

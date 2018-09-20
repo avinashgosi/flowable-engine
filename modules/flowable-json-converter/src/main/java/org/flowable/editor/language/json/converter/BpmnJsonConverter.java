@@ -458,10 +458,10 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
     }
 
     public BpmnModel convertToBpmnModel(JsonNode modelNode) {
-        return convertToBpmnModel(modelNode, null, null);
+        return convertToBpmnModel(modelNode, null, null, null);
     }
 
-    public BpmnModel convertToBpmnModel(JsonNode modelNode, Map<String, String> formKeyMap, Map<String, String> decisionTableKeyMap) {
+    public BpmnModel convertToBpmnModel(JsonNode modelNode, Map<String, String> formKeyMap, Map<String, String> decisionTableKeyMap, Map<String, String> caseKeyMap) {
 
         BpmnModel bpmnModel = new BpmnModel();
 
@@ -513,7 +513,7 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
                         lane.setParentProcess(process);
                         process.getLanes().add(lane);
 
-                        processJsonElements(laneNode.get(EDITOR_CHILD_SHAPES), modelNode, lane, shapeMap, formKeyMap, decisionTableKeyMap, bpmnModel);
+                        processJsonElements(laneNode.get(EDITOR_CHILD_SHAPES), modelNode, lane, shapeMap, formKeyMap, decisionTableKeyMap, bpmnModel, caseKeyMap);
                         if (CollectionUtils.isNotEmpty(lane.getFlowReferences())) {
                             for (String elementRef : lane.getFlowReferences()) {
                                 elementInLaneMap.put(elementRef, lane);
@@ -613,7 +613,7 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
             
             process.setEnableEagerExecutionTreeFetching(JsonConverterUtil.getPropertyValueAsBoolean(PROPERTY_IS_EAGER_EXECUTION_FETCHING, modelNode, false));
 
-            processJsonElements(shapesArrayNode, modelNode, process, shapeMap, formKeyMap, decisionTableKeyMap, bpmnModel);
+            processJsonElements(shapesArrayNode, modelNode, process, shapeMap, formKeyMap, decisionTableKeyMap, bpmnModel, caseKeyMap);
 
         } else {
             // sequence flows are on root level so need additional parsing for pools
@@ -706,7 +706,7 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
 
     @Override
     public void processJsonElements(JsonNode shapesArrayNode, JsonNode modelNode, BaseElement parentElement, Map<String, JsonNode> shapeMap,
-            Map<String, String> formMap, Map<String, String> decisionTableMap, BpmnModel bpmnModel) {
+            Map<String, String> formMap, Map<String, String> decisionTableMap, BpmnModel bpmnModel, Map<String, String> caseKeyMap) {
 
         for (JsonNode shapeNode : shapesArrayNode) {
             String stencilId = BpmnJsonConverterUtil.getStencilId(shapeNode);
@@ -719,6 +719,10 @@ public class BpmnJsonConverter implements EditorJsonConstants, StencilConstants,
 
                 if (converterInstance instanceof FormAwareConverter) {
                     ((FormAwareConverter) converterInstance).setFormMap(formMap);
+                }
+
+                if (converterInstance instanceof CaseModelAwareConverter) {
+                    ((CaseModelAwareConverter) converterInstance).setCaseModelMap(caseKeyMap);
                 }
 
                 converterInstance.convertToBpmnModel(shapeNode, modelNode, this, parentElement, shapeMap, bpmnModel);

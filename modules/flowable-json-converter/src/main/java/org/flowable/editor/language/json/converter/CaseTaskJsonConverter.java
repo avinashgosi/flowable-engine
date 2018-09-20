@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * @author Avinash Gosi
  */
-public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements FormAwareConverter, FormKeyAwareConverter {
+public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements CaseModelAwareConverter {
     
     protected Map<String, String> caseModelMap;
     
@@ -74,12 +74,7 @@ public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements Form
     }
 
     @Override
-    public void setFormMap(Map<String, String> formMap) {
-
-    }
-
-    @Override
-    public void setFormKeyMap(Map<String, ModelInfo> formKeyMap) {
-
+    public void setCaseModelMap(Map<String, String> caseModelMap) {
+        this.caseModelMap = caseModelMap;
     }
 }

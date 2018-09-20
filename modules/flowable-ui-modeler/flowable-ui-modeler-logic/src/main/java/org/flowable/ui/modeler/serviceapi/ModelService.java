@@ -46,7 +46,7 @@ public interface ModelService {
 
     byte[] getBpmnXML(AbstractModel model);
 
-    BpmnModel getBpmnModel(AbstractModel model, Map<String, Model> formMap, Map<String, Model> decisionTableMap);
+    BpmnModel getBpmnModel(AbstractModel model, Map<String, Model> formMap, Map<String, Model> decisionTableMap, Map<String, Model> caseModelMap);
     
     CmmnModel getCmmnModel(AbstractModel model);
 

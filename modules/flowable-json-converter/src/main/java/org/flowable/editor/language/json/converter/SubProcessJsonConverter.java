@@ -105,7 +105,7 @@ public class SubProcessJsonConverter extends BaseBpmnJsonConverter implements Fo
         }
 
         JsonNode childShapesArray = elementNode.get(EDITOR_CHILD_SHAPES);
-        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model);
+        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model, null);
 
         JsonNode processDataPropertiesNode = elementNode.get(EDITOR_SHAPE_PROPERTIES).get(PROPERTY_DATA_PROPERTIES);
         if (processDataPropertiesNode != null) {

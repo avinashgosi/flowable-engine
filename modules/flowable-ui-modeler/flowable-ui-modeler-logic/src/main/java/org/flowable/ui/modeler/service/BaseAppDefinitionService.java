@@ -227,7 +227,7 @@ public class BaseAppDefinitionService {
         }
 
         if (parentModel.getModelType() == null || parentModel.getModelType() == AbstractModel.MODEL_TYPE_BPMN) {
-            BpmnModel bpmnModel = modelService.getBpmnModel(parentModel, formMap, decisionTableMap);
+            BpmnModel bpmnModel = modelService.getBpmnModel(parentModel, formMap, decisionTableMap, caseModelMap);
             Map<String, StartEvent> startEventMap = processNoneStartEvents(bpmnModel);
 
             for (Process process : bpmnModel.getProcesses()) {

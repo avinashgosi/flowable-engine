@@ -163,7 +163,7 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
                 }
             }
 
-            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap);
+            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap, null);
             Map<String, StartEvent> startEventMap = processNoneStartEvents(bpmnModel);
 
             for (Process process : bpmnModel.getProcesses()) {
@@ -185,7 +185,7 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
 
         for (Model model : modelDefinitions.values()) {
 
-            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap);
+            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap, null);
             Map<String, StartEvent> startEventMap = processNoneStartEvents(bpmnModel);
 
             for (Process process : bpmnModel.getProcesses()) {
