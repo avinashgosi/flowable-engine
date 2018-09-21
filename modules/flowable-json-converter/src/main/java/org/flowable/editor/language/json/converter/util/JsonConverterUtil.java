@@ -135,6 +135,12 @@ public class JsonConverterUtil implements EditorJsonConstants, StencilConstants 
         return getBpmnProcessModelChildShapesPropertyValues(editorJsonNode, "decisiontaskdecisiontablereference", allowedStencilTypes);
     }
 
+    public static List<JsonLookupResult> getBpmnProcessModelCaseTaskReferences(JsonNode editorJsonNode) {
+        List<String> allowedStencilTypes = new ArrayList<>();
+        allowedStencilTypes.add(STENCIL_TASK_CASE);
+        return getBpmnProcessModelChildShapesPropertyValues(editorJsonNode, "casetaskcasereference", allowedStencilTypes);
+    }
+
     // APP MODEL
 
     public static List<JsonNode> getAppModelReferencedProcessModels(JsonNode appModelJson) {
