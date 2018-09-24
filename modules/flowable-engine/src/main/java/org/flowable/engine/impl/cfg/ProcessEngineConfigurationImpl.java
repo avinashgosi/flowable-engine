@@ -37,6 +37,7 @@ import org.apache.ibatis.transaction.jdbc.JdbcTransactionFactory;
 import org.apache.ibatis.transaction.managed.ManagedTransactionFactory;
 import org.apache.ibatis.type.JdbcType;
 import org.flowable.common.engine.api.FlowableException;
+import org.flowable.common.engine.api.delegate.FlowableExpressionEnhancer;
 import org.flowable.common.engine.api.delegate.FlowableFunctionDelegate;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.common.engine.api.delegate.event.FlowableEventDispatcher;
@@ -53,8 +54,22 @@ import org.flowable.common.engine.impl.calendar.MapBusinessCalendarManager;
 import org.flowable.common.engine.impl.callback.RuntimeInstanceStateChangeCallback;
 import org.flowable.common.engine.impl.cfg.IdGenerator;
 import org.flowable.common.engine.impl.db.AbstractDataManager;
-import org.flowable.common.engine.impl.db.DbSchemaManager;
+import org.flowable.common.engine.impl.db.SchemaManager;
 import org.flowable.common.engine.impl.el.ExpressionManager;
+import org.flowable.common.engine.impl.el.function.FlowableShortHandExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableContainsAnyExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableContainsExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableEqualsExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableExistsExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableGetExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableGetOrDefaultExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableGreaterThanExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableGreaterThanOrEqualsExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableIsEmptyExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableIsNotEmptyExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableLowerThanExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableLowerThanOrEqualsExpressionFunction;
+import org.flowable.common.engine.impl.el.function.VariableNotEqualsExpressionFunction;
 import org.flowable.common.engine.impl.event.FlowableEventDispatcherImpl;
 import org.flowable.common.engine.impl.history.HistoryLevel;
 import org.flowable.common.engine.impl.interceptor.Command;
@@ -107,6 +122,7 @@ import org.flowable.engine.impl.ProcessEngineImpl;
 import org.flowable.engine.impl.RepositoryServiceImpl;
 import org.flowable.engine.impl.RuntimeServiceImpl;
 import org.flowable.engine.impl.SchemaOperationProcessEngineClose;
+import org.flowable.engine.impl.SchemaOperationsProcessEngineBuild;
 import org.flowable.engine.impl.TaskServiceImpl;
 import org.flowable.engine.impl.agenda.AgendaSessionFactory;
 import org.flowable.engine.impl.agenda.DefaultFlowableEngineAgendaFactory;
@@ -222,6 +238,7 @@ import org.flowable.engine.impl.interceptor.BpmnOverrideContextInterceptor;
 import org.flowable.engine.impl.interceptor.CommandInvoker;
 import org.flowable.engine.impl.interceptor.DelegateInterceptor;
 import org.flowable.engine.impl.interceptor.LoggingExecutionTreeCommandInvoker;
+import org.flowable.engine.impl.jobexecutor.AsyncCompleteCallActivityJobHandler;
 import org.flowable.engine.impl.jobexecutor.AsyncContinuationJobHandler;
 import org.flowable.engine.impl.jobexecutor.AsyncTriggerJobHandler;
 import org.flowable.engine.impl.jobexecutor.DefaultFailedJobCommandFactory;
@@ -230,6 +247,7 @@ import org.flowable.engine.impl.jobexecutor.TimerActivateProcessDefinitionHandle
 import org.flowable.engine.impl.jobexecutor.TimerStartEventJobHandler;
 import org.flowable.engine.impl.jobexecutor.TimerSuspendProcessDefinitionHandler;
 import org.flowable.engine.impl.jobexecutor.TriggerTimerEventJobHandler;
+import org.flowable.engine.impl.migration.ProcessInstanceMigrationManagerImpl;
 import org.flowable.engine.impl.persistence.deploy.DeploymentManager;
 import org.flowable.engine.impl.persistence.deploy.ProcessDefinitionCacheEntry;
 import org.flowable.engine.impl.persistence.deploy.ProcessDefinitionInfoCache;
@@ -298,6 +316,7 @@ import org.flowable.engine.impl.persistence.entity.data.impl.MybatisPropertyData
 import org.flowable.engine.impl.persistence.entity.data.impl.MybatisResourceDataManager;
 import org.flowable.engine.impl.scripting.VariableScopeResolverFactory;
 import org.flowable.engine.impl.util.ProcessInstanceHelper;
+import org.flowable.engine.migration.ProcessInstanceMigrationManager;
 import org.flowable.engine.parse.BpmnParseHandler;
 import org.flowable.form.api.FormFieldHandler;
 import org.flowable.identitylink.service.IdentityLinkEventHandler;
@@ -461,6 +480,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     // Dynamic state manager
     
     protected DynamicStateManager dynamicStateManager;
+
+    protected ProcessInstanceMigrationManager processInstanceMigrationManager;
     
     protected VariableServiceConfiguration variableServiceConfiguration;
     protected IdentityLinkServiceConfiguration identityLinkServiceConfiguration;
@@ -705,6 +726,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     // JUEL functions ///////////////////////////////////////////////////////////
     protected List<FlowableFunctionDelegate> flowableFunctionDelegates;
     protected List<FlowableFunctionDelegate> customFlowableFunctionDelegates;
+    protected List<FlowableExpressionEnhancer> expressionEnhancers;
+    protected List<FlowableExpressionEnhancer> customExpressionEnhancers;
+    protected List<FlowableShortHandExpressionFunction> shortHandExpressionFunctions;
 
     // BPMN PARSER //////////////////////////////////////////////////////////////
 
@@ -757,6 +781,10 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     protected List<String> customScriptingEngineClasses;
     protected ScriptingEngines scriptingEngines;
     protected List<ResolverFactory> resolverFactories;
+    
+    protected boolean isExpressionCacheEnabled = true;
+    protected int expressionCacheSize = 4096;
+    protected int expressionTextLengthCacheLimit = -1; // negative value to have no max length
 
     protected BusinessCalendarManager businessCalendarManager;
 
@@ -829,10 +857,10 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     // agenda factory
     protected FlowableEngineAgendaFactory agendaFactory;
 
-    protected DbSchemaManager identityLinkDbSchemaManager;
-    protected DbSchemaManager variableDbSchemaManager;
-    protected DbSchemaManager taskDbSchemaManager;
-    protected DbSchemaManager jobDbSchemaManager;
+    protected SchemaManager identityLinkDbSchemaManager;
+    protected SchemaManager variableDbSchemaManager;
+    protected SchemaManager taskDbSchemaManager;
+    protected SchemaManager jobDbSchemaManager;
 
     // Backwards compatibility //////////////////////////////////////////////////////////////
 
@@ -885,16 +913,22 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         configuratorsBeforeInit();
         initProcessDiagramGenerator();
         initHistoryLevel();
+        initShortHandExpressionFunctions();
         initFunctionDelegates();
+        initExpressionEnhancers();
         initDelegateInterceptor();
         initExpressionManager();
         initAgendaFactory();
 
         if (usingRelationalDatabase) {
             initDataSource();
-            initDbSchemaManagers();
         } else {
             initNonRelationalDataSource();
+        }
+        
+        if (usingRelationalDatabase || usingSchemaMgmt) {
+            initSchemaManager();
+            initSchemaManagementCommand();
         }
 
         initHelpers();
@@ -933,6 +967,7 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         initCandidateManager();
         initHistoryManager();
         initDynamicStateManager();
+        initProcessInstanceMigrationValidationManager();
         initJpa();
         initDeployers();
         initEventHandlers();
@@ -1006,9 +1041,11 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         initService(managementService);
         initService(dynamicBpmnService);
     }
-
-    public void initDbSchemaManagers() {
-        super.initDbSchemaManager();
+    
+    @Override
+    public void initSchemaManager() {
+        super.initSchemaManager();
+        
         initProcessDbSchemaManager();
         initIdentityLinkDbSchemaManager();
         initVariableDbSchemaManager();
@@ -1021,8 +1058,8 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     }
 
     protected void initProcessDbSchemaManager() {
-        if (this.dbSchemaManager == null) {
-            this.dbSchemaManager = new ProcessDbSchemaManager();
+        if (this.schemaManager == null) {
+            this.schemaManager = new ProcessDbSchemaManager();
         }
     }
 
@@ -1047,6 +1084,14 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     protected void initJobDbSchemaManager() {
         if (this.jobDbSchemaManager == null) {
             this.jobDbSchemaManager = new JobDbSchemaManager();
+        }
+    }
+    
+    public void initSchemaManagementCommand() {
+        if (schemaManagementCmd == null) {
+            if (usingRelationalDatabase && databaseSchemaUpdate != null) {
+                this.schemaManagementCmd = new SchemaOperationsProcessEngineBuild();
+            }
         }
     }
 
@@ -1204,6 +1249,12 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     public void initDynamicStateManager() {
         if (dynamicStateManager == null) {
             dynamicStateManager = new DefaultDynamicStateManager();
+        }
+    }
+
+    public void initProcessInstanceMigrationValidationManager() {
+        if (processInstanceMigrationManager == null) {
+            processInstanceMigrationManager = new ProcessInstanceMigrationManagerImpl();
         }
     }
 
@@ -1790,6 +1841,9 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 
         ProcessEventJobHandler processEventJobHandler = new ProcessEventJobHandler();
         jobHandlers.put(processEventJobHandler.getType(), processEventJobHandler);
+        
+        AsyncCompleteCallActivityJobHandler asyncCompleteCallActivityJobHandler = new AsyncCompleteCallActivityJobHandler();
+        jobHandlers.put(asyncCompleteCallActivityJobHandler.getType(), asyncCompleteCallActivityJobHandler);
 
         // if we have custom job handlers, register them
         if (getCustomJobHandlers() != null) {
@@ -2127,9 +2181,17 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
 
     public void initExpressionManager() {
         if (expressionManager == null) {
-            expressionManager = new ProcessExpressionManager(delegateInterceptor, beans);
+            ProcessExpressionManager processExpressionManager = new ProcessExpressionManager(delegateInterceptor, beans);
+            
+            if (isExpressionCacheEnabled) {
+                processExpressionManager.setExpressionCache(new DefaultDeploymentCache<>(expressionCacheSize));
+                processExpressionManager.setExpressionTextLengthCacheLimit(expressionTextLengthCacheLimit);
+            }
+            
+            expressionManager = processExpressionManager;
         }
         expressionManager.setFunctionDelegates(flowableFunctionDelegates);
+        expressionManager.setExpressionEnhancers(expressionEnhancers);
     }
 
     public void initBusinessCalendarManager() {
@@ -2248,15 +2310,60 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
             this.formFieldHandler = new DefaultFormFieldHandler();
         }
     }
+    
+    public void initShortHandExpressionFunctions() {
+        if (shortHandExpressionFunctions == null) {
+            shortHandExpressionFunctions = new ArrayList<>();
+            
+            String variableScopeName = "execution";
+            
+            shortHandExpressionFunctions.add(new VariableGetExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableGetOrDefaultExpressionFunction(variableScopeName));
+            
+            shortHandExpressionFunctions.add(new VariableContainsAnyExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableContainsExpressionFunction(variableScopeName));
+            
+            shortHandExpressionFunctions.add(new VariableEqualsExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableNotEqualsExpressionFunction(variableScopeName));
+            
+            shortHandExpressionFunctions.add(new VariableExistsExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableIsEmptyExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableIsNotEmptyExpressionFunction(variableScopeName));
+            
+            shortHandExpressionFunctions.add(new VariableLowerThanExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableLowerThanOrEqualsExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableGreaterThanExpressionFunction(variableScopeName));
+            shortHandExpressionFunctions.add(new VariableGreaterThanOrEqualsExpressionFunction(variableScopeName));
+        }
+    }
 
     public void initFunctionDelegates() {
         if (this.flowableFunctionDelegates == null) {
             this.flowableFunctionDelegates = new ArrayList<>();
             this.flowableFunctionDelegates.add(new FlowableDateFunctionDelegate());
+            
+            for (FlowableShortHandExpressionFunction expressionFunction : shortHandExpressionFunctions) {
+                flowableFunctionDelegates.add(expressionFunction);
+            }
         }
 
         if (this.customFlowableFunctionDelegates != null) {
             this.flowableFunctionDelegates.addAll(this.customFlowableFunctionDelegates);
+        }
+    }
+    
+    public void initExpressionEnhancers() {
+        if (expressionEnhancers == null) {
+            expressionEnhancers = new ArrayList<>();
+            
+            for (FlowableShortHandExpressionFunction expressionFunction : shortHandExpressionFunctions) {
+                expressionEnhancers.add(expressionFunction);
+            }
+            
+        }
+        
+        if (customExpressionEnhancers != null) {
+            expressionEnhancers.addAll(customExpressionEnhancers);
         }
     }
 
@@ -2759,6 +2866,33 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
     @Override
     public ProcessEngineConfigurationImpl setExpressionManager(ExpressionManager expressionManager) {
         this.expressionManager = expressionManager;
+        return this;
+    }
+    
+    public boolean isExpressionCacheEnabled() {
+        return isExpressionCacheEnabled;
+    }
+
+    public ProcessEngineConfigurationImpl setExpressionCacheEnabled(boolean isExpressionCacheEnabled) {
+        this.isExpressionCacheEnabled = isExpressionCacheEnabled;
+        return this;
+    }
+
+    public int getExpressionCacheSize() {
+        return expressionCacheSize;
+    }
+
+    public ProcessEngineConfigurationImpl setExpressionCacheSize(int expressionCacheSize) {
+        this.expressionCacheSize = expressionCacheSize;
+        return this;
+    }
+
+    public int getExpressionTextLengthCacheLimit() {
+        return expressionTextLengthCacheLimit;
+    }
+
+    public ProcessEngineConfigurationImpl setExpressionTextLengthCacheLimit(int expressionTextLengthCacheLimit) {
+        this.expressionTextLengthCacheLimit = expressionTextLengthCacheLimit;
         return this;
     }
 
@@ -3265,6 +3399,33 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         this.customFlowableFunctionDelegates = customFlowableFunctionDelegates;
         return this;
     }
+    
+    public List<FlowableExpressionEnhancer> getExpressionEnhancers() {
+        return expressionEnhancers;
+    }
+
+    public ProcessEngineConfigurationImpl setExpressionEnhancers(List<FlowableExpressionEnhancer> expressionEnhancers) {
+        this.expressionEnhancers = expressionEnhancers;
+        return this;
+    }
+
+    public List<FlowableExpressionEnhancer> getCustomExpressionEnhancers() {
+        return customExpressionEnhancers;
+    }
+
+    public ProcessEngineConfigurationImpl setCustomExpressionEnhancers(List<FlowableExpressionEnhancer> customExpressionEnhancers) {
+        this.customExpressionEnhancers = customExpressionEnhancers;
+        return this;
+    }
+
+    public List<FlowableShortHandExpressionFunction> getShortHandExpressionFunctions() {
+        return shortHandExpressionFunctions;
+    }
+
+    public ProcessEngineConfigurationImpl setShortHandExpressionFunctions(List<FlowableShortHandExpressionFunction> shortHandExpressionFunctions) {
+        this.shortHandExpressionFunctions = shortHandExpressionFunctions;
+        return this;
+    }
 
     public boolean isEnableDatabaseEventLogging() {
         return enableDatabaseEventLogging;
@@ -3696,6 +3857,15 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         return this;
     }
 
+    public ProcessInstanceMigrationManager getProcessInstanceMigrationManager() {
+        return processInstanceMigrationManager;
+    }
+
+    public ProcessEngineConfigurationImpl setProcessInstanceMigrationManager(ProcessInstanceMigrationManager processInstanceMigrationValidationMananger) {
+        this.processInstanceMigrationManager = processInstanceMigrationValidationMananger;
+        return this;
+    }
+
     @Override
     public ProcessEngineConfigurationImpl setClock(Clock clock) {
         if (this.clock == null) {
@@ -3773,42 +3943,42 @@ public abstract class ProcessEngineConfigurationImpl extends ProcessEngineConfig
         return this;
     }
 
-    public DbSchemaManager getVariableDbSchemaManager() {
+    public SchemaManager getVariableDbSchemaManager() {
         return variableDbSchemaManager;
     }
 
-    public ProcessEngineConfigurationImpl setVariableDbSchemaManager(DbSchemaManager variableDbSchemaManager) {
+    public ProcessEngineConfigurationImpl setVariableDbSchemaManager(SchemaManager variableDbSchemaManager) {
         this.variableDbSchemaManager = variableDbSchemaManager;
         return this;
     }
 
-    public DbSchemaManager getTaskDbSchemaManager() {
+    public SchemaManager getTaskDbSchemaManager() {
         return taskDbSchemaManager;
     }
 
-    public ProcessEngineConfigurationImpl setTaskDbSchemaManager(DbSchemaManager taskDbSchemaManager) {
+    public ProcessEngineConfigurationImpl setTaskDbSchemaManager(SchemaManager taskDbSchemaManager) {
         this.taskDbSchemaManager = taskDbSchemaManager;
         return this;
     }
 
-    public DbSchemaManager getIdentityLinkDbSchemaManager() {
+    public SchemaManager getIdentityLinkDbSchemaManager() {
         return identityLinkDbSchemaManager;
     }
 
-    public ProcessEngineConfigurationImpl setIdentityLinkDbSchemaManager(DbSchemaManager identityLinkDbSchemaManager) {
+    public ProcessEngineConfigurationImpl setIdentityLinkDbSchemaManager(SchemaManager identityLinkDbSchemaManager) {
         this.identityLinkDbSchemaManager = identityLinkDbSchemaManager;
         return this;
     }
 
-    public DbSchemaManager getJobDbSchemaManager() {
+    public SchemaManager getJobDbSchemaManager() {
         return jobDbSchemaManager;
     }
 
-    public ProcessEngineConfigurationImpl setJobDbSchemaManager(DbSchemaManager jobDbSchemaManager) {
+    public ProcessEngineConfigurationImpl setJobDbSchemaManager(SchemaManager jobDbSchemaManager) {
         this.jobDbSchemaManager = jobDbSchemaManager;
         return this;
     }
-
+    
     // Flowable 5
 
     public boolean isFlowable5CompatibilityEnabled() {
