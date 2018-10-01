@@ -31,12 +31,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @author Tijs Rademakers
  */
 public class SubProcessJsonConverter extends BaseBpmnJsonConverter implements FormAwareConverter, FormKeyAwareConverter,
-        DecisionTableAwareConverter, DecisionTableKeyAwareConverter {
+        DecisionTableAwareConverter, DecisionTableKeyAwareConverter, CaseModelAwareConverter {
 
     protected Map<String, String> formMap;
     protected Map<String, ModelInfo> formKeyMap;
     protected Map<String, String> decisionTableMap;
     protected Map<String, ModelInfo> decisionTableKeyMap;
+    protected Map<String, String> caseMap;
 
     public static void fillTypes(Map<String, Class<? extends BaseBpmnJsonConverter>> convertersToBpmnMap,
             Map<Class<? extends BaseElement>, Class<? extends BaseBpmnJsonConverter>> convertersToJsonMap) {
@@ -105,7 +106,7 @@ public class SubProcessJsonConverter extends BaseBpmnJsonConverter implements Fo
         }
 
         JsonNode childShapesArray = elementNode.get(EDITOR_CHILD_SHAPES);
-        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model, null);
+        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model, caseMap);
 
         JsonNode processDataPropertiesNode = elementNode.get(EDITOR_SHAPE_PROPERTIES).get(PROPERTY_DATA_PROPERTIES);
         if (processDataPropertiesNode != null) {
@@ -141,5 +142,10 @@ public class SubProcessJsonConverter extends BaseBpmnJsonConverter implements Fo
     @Override
     public void setDecisionTableKeyMap(Map<String, ModelInfo> decisionTableKeyMap) {
         this.decisionTableKeyMap = decisionTableKeyMap;
+    }
+
+    @Override
+    public void setCaseModelMap(Map<String, String> caseModelMap) {
+        this.caseMap = caseModelMap;
     }
 }

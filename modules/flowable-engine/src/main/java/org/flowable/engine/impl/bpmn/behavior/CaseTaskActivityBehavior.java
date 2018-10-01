@@ -13,7 +13,7 @@
 
 package org.flowable.engine.impl.bpmn.behavior;
 
-import liquibase.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.CaseTask;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.engine.cmmn.CaseInstanceService;

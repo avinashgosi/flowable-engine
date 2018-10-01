@@ -81,19 +81,20 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
             Map<String, Model> formMap = new HashMap<>();
             Map<String, Model> decisionTableMap = new HashMap<>();
             Map<String, Model> processMap = new HashMap<>();
+            Map<String, Model> caseMap = new HashMap<>();
 
             List<AppModelDefinition> modelDefinitions = appDefinition.getDefinition().getModels();
             if (CollectionUtils.isNotEmpty(modelDefinitions)) {
-                createBpmnZipEntries(modelDefinitions, zipOutputStream, formMap, decisionTableMap);
+                createBpmnZipEntries(modelDefinitions, zipOutputStream, formMap, decisionTableMap, caseMap);
             }
             
             List<AppModelDefinition> cmmnModelDefinitions = appDefinition.getDefinition().getCmmnModels();
             if (CollectionUtils.isNotEmpty(cmmnModelDefinitions)) {
-                createCmmnZipEntries(cmmnModelDefinitions, zipOutputStream, formMap, decisionTableMap, processMap);
+                createCmmnZipEntries(cmmnModelDefinitions, zipOutputStream, formMap, decisionTableMap, processMap, caseMap);
 
                 if (!processMap.isEmpty()){
                     findAndAddReferencedBpmnModels(processMap);
-                    createBpmnZipEntries(processMap, zipOutputStream, formMap, decisionTableMap);
+                    createBpmnZipEntries(processMap, zipOutputStream, formMap, decisionTableMap, caseMap);
                 }
             }
             
@@ -112,6 +113,10 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
                 } catch (Exception e) {
                     throw new InternalServerErrorException(String.format("Error converting decision table %s to XML", decisionTableModel.getName()));
                 }
+            }
+
+            for (Model caseModel : caseMap.values()) {
+                createZipEntries(caseModel, "case-models", zipOutputStream);
             }
 
             zipOutputStream.close();
@@ -148,7 +153,7 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
     }
     
     protected void createBpmnZipEntries(List<AppModelDefinition> modelDefinitions, ZipOutputStream zipOutputStream, 
-                    Map<String, Model> formMap, Map<String, Model> decisionTableMap) throws Exception {
+                    Map<String, Model> formMap, Map<String, Model> decisionTableMap, Map<String, Model> caseMap) throws Exception {
         
         for (AppModelDefinition modelDef : modelDefinitions) {
             Model model = modelService.getModel(modelDef.getId());
@@ -160,10 +165,12 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
 
                 } else if (Model.MODEL_TYPE_DECISION_TABLE == childModel.getModelType()) {
                     decisionTableMap.put(childModel.getId(), childModel);
+                } else if (Model.MODEL_TYPE_CMMN == childModel.getModelType()) {
+                    caseMap.put(childModel.getId(), childModel);
                 }
             }
 
-            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap, null);
+            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap, caseMap);
             Map<String, StartEvent> startEventMap = processNoneStartEvents(bpmnModel);
 
             for (Process process : bpmnModel.getProcesses()) {
@@ -181,11 +188,11 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
     }
 
     protected void createBpmnZipEntries(Map<String, Model> modelDefinitions, ZipOutputStream zipOutputStream,
-                                        Map<String, Model> formMap, Map<String, Model> decisionTableMap) throws Exception {
+                                        Map<String, Model> formMap, Map<String, Model> decisionTableMap, Map<String, Model> caseMap) throws Exception {
 
         for (Model model : modelDefinitions.values()) {
 
-            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap, null);
+            BpmnModel bpmnModel = modelService.getBpmnModel(model, formMap, decisionTableMap, caseMap);
             Map<String, StartEvent> startEventMap = processNoneStartEvents(bpmnModel);
 
             for (Process process : bpmnModel.getProcesses()) {
@@ -203,7 +210,8 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
     }
     
     protected void createCmmnZipEntries(List<AppModelDefinition> modelDefinitions, ZipOutputStream zipOutputStream, 
-                    Map<String, Model> formMap, Map<String, Model> decisionTableMap, Map<String, Model> processMap) throws Exception {
+                    Map<String, Model> formMap, Map<String, Model> decisionTableMap, Map<String, Model> processMap,
+                                        Map<String, Model> caseMap ) throws Exception {
         
         for (AppModelDefinition modelDef : modelDefinitions) {
             Model model = modelService.getModel(modelDef.getId());
@@ -218,6 +226,8 @@ public class AppDefinitionExportService extends BaseAppDefinitionService {
 
                 } else if (Model.MODEL_TYPE_BPMN == childModel.getModelType()) {
                     processMap.put(childModel.getId(), childModel);
+                } else if (Model.MODEL_TYPE_CMMN == childModel.getModelType()) {
+                    caseMap.put(childModel.getId(), childModel);
                 }
 
             }

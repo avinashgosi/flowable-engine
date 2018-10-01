@@ -100,6 +100,8 @@ public class AppDefinitionImportService {
 
                         } else if (Model.MODEL_TYPE_DECISION_TABLE == childModel.getModelType()) {
                             existingDecisionTableMap.put(childModel.getKey(), childModel);
+                        } else if (Model.MODEL_TYPE_CMMN == childModel.getModelType()) {
+                            existingCaseModelMap.put(childModel.getKey(), childModel);
                         }
                     }
 
@@ -149,7 +151,7 @@ public class AppDefinitionImportService {
                 Map<String, Model> formKeyAndModelMap = importForms(formMap, thumbnailMap, existingFormModelMap);
                 Map<String, Model> decisionTableKeyAndModelMap = importDecisionTables(decisionTableMap, thumbnailMap, existingDecisionTableModelMap);
                 Map<String, Model> bpmnModelIdAndModelMap = importBpmnModels(bpmnModelMap, formKeyAndModelMap, decisionTableKeyAndModelMap,
-                        thumbnailMap, existingProcessModelMap);
+                        thumbnailMap, existingProcessModelMap, existingCaseModelMap);
                 Map<String, Model> cmmnModelIdAndModelMap = importCmmnModels(cmmnModelMap, formKeyAndModelMap, decisionTableKeyAndModelMap,
                                 thumbnailMap, existingCaseModelMap);
 
@@ -346,7 +348,8 @@ public class AppDefinitionImportService {
     }
 
     protected Map<String, Model> importBpmnModels(Map<String, String> bpmnModelMap, Map<String, Model> formKeyAndModelMap,
-                                                  Map<String, Model> decisionTableKeyAndModelMap, Map<String, byte[]> thumbnailMap, Map<String, Model> existingProcessModelMap) {
+                                                  Map<String, Model> decisionTableKeyAndModelMap, Map<String, byte[]> thumbnailMap,
+                                                  Map<String, Model> existingProcessModelMap, Map<String, Model> existingCaseModelMap) {
 
         Map<String, Model> bpmnModelIdAndModelMap = new HashMap<>();
         for (String bpmnModelKey : bpmnModelMap.keySet()) {
@@ -385,7 +388,13 @@ public class AppDefinitionImportService {
                         decisionTableModel.getName(), decisionTableModel.getKey()));
             }
 
-            BpmnModel bpmnModel = bpmnJsonConverter.convertToBpmnModel(bpmnModelNode, oldFormIdFormKeyMap, oldDecisionTableIdDecisionTableKeyMap, null);
+            Map<String, String> oldCaseIdFormKeyMap = new HashMap<>();
+            for (String oldCaseId : existingCaseModelMap.keySet()) {
+                Model caseModel = existingCaseModelMap.get(oldCaseId);
+                oldCaseIdFormKeyMap.put(oldCaseId, caseModel.getKey());
+            }
+
+            BpmnModel bpmnModel = bpmnJsonConverter.convertToBpmnModel(bpmnModelNode, oldFormIdFormKeyMap, oldDecisionTableIdDecisionTableKeyMap, oldCaseIdFormKeyMap);
             String updatedBpmnJson = bpmnJsonConverter.convertToJson(bpmnModel, formKeyModelIdMap, decisionTableKeyModelIdMap).toString();
 
             Model updatedProcessModel = null;

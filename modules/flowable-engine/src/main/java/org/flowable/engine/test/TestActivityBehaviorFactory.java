@@ -152,8 +152,9 @@ public class TestActivityBehaviorFactory extends AbstractBehaviorFactory impleme
     }
 
     @Override
-    public CaseTaskActivityBehavior createCaseTaskActivityBehavior(CaseTask caseTaskTask) {
-        return null;
+    public CaseTaskActivityBehavior createCaseTaskActivityBehavior(CaseTask caseTask) {
+
+        return wrappedActivityBehaviorFactory.createCaseTaskActivityBehavior(caseTask);
     }
 
     @Override

@@ -1,9 +1,9 @@
 /* Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,12 +28,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  * @author Tijs Rademakers
  */
 public class AdhocSubProcessJsonConverter extends BaseBpmnJsonConverter implements FormAwareConverter, FormKeyAwareConverter,
-        DecisionTableAwareConverter, DecisionTableKeyAwareConverter {
+        DecisionTableAwareConverter, DecisionTableKeyAwareConverter, CaseModelAwareConverter {
 
     protected Map<String, String> formMap;
     protected Map<String, ModelInfo> formKeyMap;
     protected Map<String, String> decisionTableMap;
     protected Map<String, ModelInfo> decisionTableKeyMap;
+    protected Map<String, String> caseMap;
 
     public static void fillTypes(Map<String, Class<? extends BaseBpmnJsonConverter>> convertersToBpmnMap, Map<Class<? extends BaseElement>, Class<? extends BaseBpmnJsonConverter>> convertersToJsonMap) {
 
@@ -74,7 +75,7 @@ public class AdhocSubProcessJsonConverter extends BaseBpmnJsonConverter implemen
         subProcess.setOrdering(getPropertyValueAsString("ordering", elementNode));
         subProcess.setCancelRemainingInstances(getPropertyValueAsBoolean("cancelremaininginstances", elementNode));
         JsonNode childShapesArray = elementNode.get(EDITOR_CHILD_SHAPES);
-        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model, null);
+        processor.processJsonElements(childShapesArray, modelNode, subProcess, shapeMap, formMap, decisionTableMap, model, caseMap);
         return subProcess;
     }
 
@@ -96,5 +97,10 @@ public class AdhocSubProcessJsonConverter extends BaseBpmnJsonConverter implemen
     @Override
     public void setDecisionTableKeyMap(Map<String, ModelInfo> decisionTableKeyMap) {
         this.decisionTableKeyMap = decisionTableKeyMap;
+    }
+
+    @Override
+    public void setCaseModelMap(Map<String, String> caseModelMap) {
+        this.caseMap = caseModelMap;
     }
 }
