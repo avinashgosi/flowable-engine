@@ -46,6 +46,6 @@ public interface EngineConfigurationConstants {
     
     int PRIORITY_ENGINE_CONTENT = PRIORITY_ENGINE_FORM + 100000;
     
-    int PRIORITY_ENGINE_CMMN = 40000;
+    int PRIORITY_ENGINE_CMMN = PRIORITY_ENGINE_CONTENT + 100000;
     
 }

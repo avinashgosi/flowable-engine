@@ -768,12 +768,6 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:element name="globalCaseTask" type="tGlobalCaseTask" substitutionGroup="rootElement"/>
-	<xsd:complexType name="tGlobalCaseTask">
-		<xsd:complexContent>
-			<xsd:extension base="tGlobalTask"/>
-		</xsd:complexContent>
-	</xsd:complexType>
 
 	<xsd:element name="globalScriptTask" type="tGlobalScriptTask"  substitutionGroup="rootElement"/>
 	<xsd:complexType name="tGlobalScriptTask">
@@ -992,12 +986,6 @@
 		</xsd:complexContent>
 	</xsd:complexType>
 
-	<xsd:element name="caseTask" type="tCaseTask" substitutionGroup="flowElement"/>
-	<xsd:complexType name="tCaseTask">
-		<xsd:complexContent>
-			<xsd:extension base="tTask"/>
-		</xsd:complexContent>
-	</xsd:complexType>
 
 	<xsd:element name="message" type="tMessage" substitutionGroup="rootElement"/>	
 	<xsd:complexType name="tMessage">

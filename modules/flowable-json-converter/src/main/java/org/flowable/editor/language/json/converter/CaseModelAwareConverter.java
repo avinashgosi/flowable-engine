@@ -15,7 +15,7 @@ package org.flowable.editor.language.json.converter;
 import java.util.Map;
 
 /**
- * @author Tijs Rademakers
+ * @author Avinash Gosi
  */
 public interface CaseModelAwareConverter {
 

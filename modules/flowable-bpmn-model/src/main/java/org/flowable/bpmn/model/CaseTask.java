@@ -13,9 +13,9 @@
 package org.flowable.bpmn.model;
 
 /**
- * @author Joram Barrez
+ * @author Avinash Gosi
  */
-public class CaseTask extends Task {
+public class CaseTask extends ServiceTask {
 
     protected String caseRef;
 
