@@ -68,6 +68,10 @@
         </dependency>
         <dependency>
             <groupId>org.flowable</groupId>
+            <artifactId>flowable-cmmn-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
             <artifactId>flowable-dmn-api</artifactId>
         </dependency>
         <dependency>

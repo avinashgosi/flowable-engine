@@ -120,4 +120,26 @@ public abstract class ExternalInvocationTaskValidator extends ProcessLevelValida
 
     }
 
+    protected void validateFieldDeclarationsForCase(org.flowable.bpmn.model.Process process, TaskWithFieldExtensions task, List<FieldExtension> fieldExtensions, List<ValidationError> errors) {
+        boolean caseRefDefined = false;
+
+        for (FieldExtension fieldExtension : fieldExtensions) {
+
+            String fieldName = fieldExtension.getFieldName();
+            String fieldValue = fieldExtension.getStringValue();
+            String fieldExpression = fieldExtension.getExpression();
+
+            if (fieldName.equals("caseref") && ((fieldValue != null && fieldValue.length() > 0) || (fieldExpression != null && fieldExpression.length() > 0))) {
+                caseRefDefined = true;
+            }
+
+        }
+
+        if (!caseRefDefined) {
+            addError(errors, Problems.HTTP_TASK_NO_REQUEST_METHOD, process, task, "No request method is defined on the http activity");
+        }
+
+
+    }
+
 }

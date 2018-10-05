@@ -15,7 +15,15 @@ package org.flowable.engine.impl.bpmn.behavior;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.CaseTask;
+import org.flowable.bpmn.model.FieldExtension;
+import org.flowable.bpmn.model.ServiceTask;
+import org.flowable.cmmn.api.CmmnRuntimeService;
+import org.flowable.cmmn.api.runtime.CaseInstance;
+import org.flowable.cmmn.api.runtime.CaseInstanceBuilder;
+import org.flowable.cmmn.engine.impl.runtime.CaseInstanceBuilderImpl;
+import org.flowable.cmmn.engine.impl.runtime.CaseInstanceHelper;
 import org.flowable.common.engine.api.FlowableException;
+import org.flowable.common.engine.impl.interceptor.CommandContext;
 import org.flowable.engine.cmmn.CaseInstanceService;
 import org.flowable.engine.delegate.DelegateExecution;
 import org.flowable.engine.impl.util.CommandContextUtil;
@@ -29,8 +37,8 @@ public class CaseTaskActivityBehavior extends TaskActivityBehavior {
 
     protected CaseTask caseTask;
 
-    public CaseTaskActivityBehavior(CaseTask caseTask) {
-        this.caseTask = caseTask;
+    public CaseTaskActivityBehavior(ServiceTask caseTask) {
+        this.caseTask = (CaseTask) caseTask;
     }
 
     @Override
@@ -43,21 +51,32 @@ public class CaseTaskActivityBehavior extends TaskActivityBehavior {
 
         caseInstanceHelper.startCaseInstance(caseInstanceBuilder);*/
 
-        CaseInstanceService caseInstanceService = CommandContextUtil.getProcessEngineConfiguration().getCaseInstanceService();
+//        CaseInstanceService caseInstanceService = CommandContextUtil.getProcessEngineConfiguration().getCaseInstanceService();
+        CmmnRuntimeService cmmnRuntimeService = CommandContextUtil.getProcessEngineConfiguration().getCmmnRuntimeService();
 
-        if (caseInstanceService == null) {
-            throw new FlowableException("Could not start case instance: no " + CaseInstanceService.class + " implementation found");
+        if (cmmnRuntimeService == null) {
+            throw new FlowableException("Could not start case instance: no " + CmmnRuntimeService.class + " implementation found");
         }
 
         String externalRef = null;
         if (caseTask != null) {
-            externalRef = caseTask.getCaseRef();
+            for (FieldExtension fieldExtension : caseTask.getFieldExtensions()) {
+                if ("caseref".equals(fieldExtension.getFieldName()) && StringUtils.isNotEmpty(fieldExtension.getStringValue())) {
+                    externalRef = fieldExtension.getStringValue();
+                    break;
+                }
+            }
         }
         if (StringUtils.isEmpty(externalRef)) {
             throw new FlowableException("Could not start case instance: no externalRef defined");
         }
 
-        String processInstanceId = caseInstanceService.startCaseInstanceByKey(externalRef, null);
+        CaseInstanceBuilder caseInstanceBuilder = cmmnRuntimeService.createCaseInstanceBuilder();
+        caseInstanceBuilder.caseDefinitionKey(externalRef);
+
+        CaseInstance caseInstance = caseInstanceBuilder.start();
+
+        String processInstanceId = caseInstance.getId();//caseInstanceService.startCaseInstanceByKey(externalRef, null);
     }
 
 }

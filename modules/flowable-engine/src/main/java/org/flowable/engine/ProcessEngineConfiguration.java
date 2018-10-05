@@ -13,12 +13,7 @@
 
 package org.flowable.engine;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
+import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.common.engine.impl.AbstractEngineConfiguration;
 import org.flowable.common.engine.impl.cfg.BeansConfigurationHelper;
 import org.flowable.common.engine.impl.history.HistoryLevel;
@@ -31,6 +26,11 @@ import org.flowable.engine.impl.cfg.StandaloneProcessEngineConfiguration;
 import org.flowable.image.ProcessDiagramGenerator;
 import org.flowable.job.service.impl.asyncexecutor.AsyncExecutor;
 import org.flowable.task.service.TaskPostProcessor;
+
+import javax.sql.DataSource;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Configuration information from which a process engine can be build.
@@ -147,6 +147,7 @@ public abstract class ProcessEngineConfiguration extends AbstractEngineConfigura
     /** postprocessor for a task builder */
     protected TaskPostProcessor taskPostProcessor = null;
 
+    protected CmmnRuntimeService cmmnRuntimeService;
     protected CaseInstanceService caseInstanceService;
 
     /** use one of the static createXxxx methods instead */
@@ -711,6 +712,14 @@ public abstract class ProcessEngineConfiguration extends AbstractEngineConfigura
 
     public void setTaskPostProcessor(TaskPostProcessor processor) {
         this.taskPostProcessor = processor;
+    }
+
+    public CmmnRuntimeService getCmmnRuntimeService(){
+        return this.cmmnRuntimeService;
+    }
+    public void setCmmnRuntimeService(CmmnRuntimeService cmmnRuntimeService){
+        this.cmmnRuntimeService = cmmnRuntimeService;
+//        this.setCaseInstanceService(new DefaultCaseInstanceService(cmmnRuntimeService));
     }
 
     public CaseInstanceService getCaseInstanceService(){

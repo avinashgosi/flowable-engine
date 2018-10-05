@@ -21,6 +21,7 @@ import org.flowable.bpmn.converter.util.BpmnXMLUtil;
 import org.flowable.bpmn.model.AbstractFlowableHttpHandler;
 import org.flowable.bpmn.model.BaseElement;
 import org.flowable.bpmn.model.BpmnModel;
+import org.flowable.bpmn.model.CaseTask;
 import org.flowable.bpmn.model.CustomProperty;
 import org.flowable.bpmn.model.HttpServiceTask;
 import org.flowable.bpmn.model.ImplementationType;
@@ -48,6 +49,8 @@ public class ServiceTaskXMLConverter extends BaseBpmnXMLConverter {
         ServiceTask serviceTask = null;
         if (ServiceTask.HTTP_TASK.equals(serviceTaskType)) {
             serviceTask = new HttpServiceTask();
+        } else if (ServiceTask.CASE_TASK.equals(serviceTaskType)) {
+            serviceTask = new CaseTask();
         } else {
             serviceTask = new ServiceTask();
         }

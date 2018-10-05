@@ -86,7 +86,7 @@ public class BpmnDisplayJsonConverter {
         propertyMappers.put("ServiceTask", new ServiceTaskInfoMapper());
         propertyMappers.put("ThrowEvent", new EventInfoMapper());
         propertyMappers.put("UserTask", new UserTaskInfoMapper());
-        propertyMappers.put("CaseTask", new CaseTaskInfoMapper());
+//        propertyMappers.put("CaseTask", new CaseTaskInfoMapper());
     }
 
     public void processProcessElements(AbstractModel processModel, ObjectNode displayNode, GraphicInfo diagramInfo) {

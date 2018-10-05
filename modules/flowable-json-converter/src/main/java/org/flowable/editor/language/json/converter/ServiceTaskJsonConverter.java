@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.BaseElement;
+import org.flowable.bpmn.model.CaseTask;
 import org.flowable.bpmn.model.FieldExtension;
 import org.flowable.bpmn.model.FlowElement;
 import org.flowable.bpmn.model.HttpServiceTask;
@@ -47,6 +48,7 @@ public class ServiceTaskJsonConverter extends BaseBpmnJsonConverter implements D
     public static void fillBpmnTypes(Map<Class<? extends BaseElement>, Class<? extends BaseBpmnJsonConverter>> convertersToJsonMap) {
         convertersToJsonMap.put(ServiceTask.class, ServiceTaskJsonConverter.class);
         convertersToJsonMap.put(HttpServiceTask.class, ServiceTaskJsonConverter.class);
+        convertersToJsonMap.put(CaseTask.class, ServiceTaskJsonConverter.class);
     }
 
     @Override
@@ -129,6 +131,8 @@ public class ServiceTaskJsonConverter extends BaseBpmnJsonConverter implements D
             setPropertyFieldValue(PROPERTY_SHELLTASK_ERROR_REDIRECT, "errorRedirect", serviceTask, propertiesNode);
             setPropertyFieldValue(PROPERTY_SHELLTASK_OUTPUT_VARIABLE, "outputVariable", serviceTask, propertiesNode);
             setPropertyFieldValue(PROPERTY_SHELLTASK_WAIT, "wait", serviceTask, propertiesNode);
+        } else if ("case".equalsIgnoreCase(serviceTask.getType())) {
+            setPropertyFieldValue(PROPERTY_CASE_REFERENCE, "caseref", serviceTask, propertiesNode);
         } else {
             if (ImplementationType.IMPLEMENTATION_TYPE_CLASS.equals(serviceTask.getImplementationType())) {
                 propertiesNode.put(PROPERTY_SERVICETASK_CLASS, serviceTask.getImplementation());

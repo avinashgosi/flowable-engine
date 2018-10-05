@@ -14,8 +14,10 @@ package org.flowable.editor.language.json.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.BaseElement;
 import org.flowable.bpmn.model.CaseTask;
+import org.flowable.bpmn.model.FieldExtension;
 import org.flowable.editor.language.json.model.ModelInfo;
 
 import java.util.Map;
@@ -37,25 +39,38 @@ public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements Case
     }
 
     public static void fillBpmnTypes(Map<Class<? extends BaseElement>, Class<? extends BaseBpmnJsonConverter>> convertersToJsonMap) {
-        convertersToJsonMap.put(CaseTask.class, CaseTaskJsonConverter.class);
+//        convertersToJsonMap.put(CaseTask.class, CaseTaskJsonConverter.class);
     }
 
     @Override
     protected void convertElementToJson(ObjectNode propertiesNode, BaseElement baseElement) {
-        CaseTask caseTask = (CaseTask) baseElement;
+        /*CaseTask caseTask = (CaseTask) baseElement;
         ObjectNode caseRefNode = objectMapper.createObjectNode();
         String caseModelKey = caseTask.getCaseRef();
 
         caseRefNode.put("id", caseModelKey);
 
-        propertiesNode.set(PROPERTY_CASE_REFERENCE, caseRefNode);
+        propertiesNode.set(PROPERTY_CASE_REFERENCE, caseRefNode);*/
     }
 
     @Override
     protected BaseElement convertJsonToElement(JsonNode elementNode, JsonNode modelNode, Map<String, JsonNode> shapeMap) {
         CaseTask task = new CaseTask();
+        task.setType("case");
 
+        FieldExtension field = new FieldExtension();
+        field.setFieldName("caseref");
         JsonNode caseModelReferenceNode = getProperty(PROPERTY_CASE_REFERENCE, elementNode);
+        if (caseModelReferenceNode != null && caseModelReferenceNode.has("id") && !caseModelReferenceNode.get("id").isNull()) {
+            String caseModelId = caseModelReferenceNode.get("id").asText();
+            if (StringUtils.isNotEmpty(caseModelId)) {
+                String caseModelKey = caseModelMap.get(caseModelId);
+                field.setStringValue(caseModelKey);
+                task.getFieldExtensions().add(field);
+            }
+        }
+
+        /*JsonNode caseModelReferenceNode = getProperty(PROPERTY_CASE_REFERENCE, elementNode);
         if (caseModelReferenceNode != null && caseModelReferenceNode.has("id") && !caseModelReferenceNode.get("id").isNull()) {
 
             String caseModelId = caseModelReferenceNode.get("id").asText();
@@ -63,7 +78,7 @@ public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements Case
                 String caseModelKey = caseModelMap.get(caseModelId);
                 task.setCaseRef(caseModelKey);
             }
-        }
+        }*/
 
         return task;
     }

@@ -12,22 +12,17 @@
  */
 package org.flowable.bpmn.converter;
 
-import org.flowable.bpmn.converter.util.BpmnXMLUtil;
 import org.flowable.bpmn.model.BaseElement;
-import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.CaseTask;
 
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
-
-public class CaseTaskXMLConverter extends BaseBpmnXMLConverter {
+public class CaseTaskXMLConverter extends ServiceTaskXMLConverter {
 
     @Override
-    protected Class<? extends BaseElement> getBpmnElementType() {
+    public Class<? extends BaseElement> getBpmnElementType() {
         return CaseTask.class;
     }
 
-    @Override
+    /*@Override
     protected BaseElement convertXMLToElement(XMLStreamReader xtr, BpmnModel model) throws Exception {
 
         CaseTask caseTask = new CaseTask();
@@ -36,11 +31,6 @@ public class CaseTaskXMLConverter extends BaseBpmnXMLConverter {
         caseTask.setCaseRef(caseRef);
 
         return caseTask;
-    }
-
-    @Override
-    protected String getXMLElementName() {
-        return ELEMENT_TASK_CASE;
     }
 
     @Override
@@ -53,5 +43,5 @@ public class CaseTaskXMLConverter extends BaseBpmnXMLConverter {
     @Override
     protected void writeAdditionalChildElements(BaseElement element, BpmnModel model, XMLStreamWriter xtw) throws Exception {
 
-    }
+    }*/
 }

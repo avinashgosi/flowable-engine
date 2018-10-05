@@ -145,7 +145,7 @@ public class DefaultActivityBehaviorFactory extends AbstractBehaviorFactory impl
     }
 
     @Override
-    public CaseTaskActivityBehavior createCaseTaskActivityBehavior(CaseTask caseTask) {
+    public CaseTaskActivityBehavior createCaseTaskActivityBehavior(ServiceTask caseTask) {
         return new CaseTaskActivityBehavior(caseTask);
     }
 

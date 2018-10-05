@@ -12,12 +12,6 @@
  */
 package org.flowable.cmmn.engine.configurator;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.flowable.cmmn.api.CallbackTypes;
 import org.flowable.cmmn.engine.CmmnEngine;
 import org.flowable.cmmn.engine.CmmnEngineConfiguration;
@@ -35,6 +29,12 @@ import org.flowable.common.engine.impl.persistence.entity.Entity;
 import org.flowable.engine.impl.cfg.ProcessEngineConfigurationImpl;
 import org.flowable.job.service.JobServiceConfiguration;
 import org.flowable.job.service.impl.asyncexecutor.AsyncExecutor;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Joram Barrez
@@ -131,6 +131,8 @@ public class CmmnEngineConfigurator extends AbstractEngineConfigurator {
 
     protected void initProcessInstanceService(ProcessEngineConfigurationImpl processEngineConfiguration) {
         cmmnEngineConfiguration.setProcessInstanceService(new DefaultProcessInstanceService(processEngineConfiguration.getRuntimeService()));
+//        processEngineConfiguration.setCaseInstanceService(new DefaultCaseInstanceService(cmmnEngineConfiguration.getCmmnRuntimeService()));
+        processEngineConfiguration.setCmmnRuntimeService(cmmnEngineConfiguration.getCmmnRuntimeService());
     }
 
     protected void initProcessInstanceStateChangedCallbacks(ProcessEngineConfigurationImpl processEngineConfiguration) {

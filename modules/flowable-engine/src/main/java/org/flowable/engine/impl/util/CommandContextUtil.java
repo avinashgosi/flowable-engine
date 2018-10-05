@@ -12,6 +12,8 @@
  */
 package org.flowable.engine.impl.util;
 
+import org.flowable.cmmn.engine.CmmnEngineConfiguration;
+import org.flowable.cmmn.engine.impl.runtime.CaseInstanceHelper;
 import org.flowable.common.engine.api.delegate.event.FlowableEventDispatcher;
 import org.flowable.common.engine.impl.context.Context;
 import org.flowable.common.engine.impl.db.DbSqlSession;
@@ -162,13 +164,13 @@ public class CommandContextUtil {
                         .get(EngineConfigurationConstants.KEY_TASK_SERVICE_CONFIG);
     }
 
-   /* public static CaseInstanceHelper getCaseInstanceHelper(CommandContext commandContext) {
+    public static CaseInstanceHelper getCaseInstanceHelper(CommandContext commandContext) {
         return getCmmnEngineConfiguration(commandContext).getCaseInstanceHelper();
     }
 
     public static CmmnEngineConfiguration getCmmnEngineConfiguration(CommandContext commandContext) {
         return (CmmnEngineConfiguration) commandContext.getEngineConfigurations().get(EngineConfigurationConstants.KEY_CMMN_ENGINE_CONFIG);
-    }*/
+    }
     
     public static TaskService getTaskService() {
         return getTaskService(getCommandContext());

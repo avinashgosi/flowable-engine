@@ -17,7 +17,7 @@ package org.flowable.bpmn.model;
  */
 public class CaseTask extends ServiceTask {
 
-    protected String caseRef;
+    /*protected String caseRef;
 
     public String getCaseRef() {
         return caseRef;
@@ -32,5 +32,5 @@ public class CaseTask extends ServiceTask {
         CaseTask clone = new CaseTask();
         clone.setValues(this);
         return clone;
-    }
+    }*/
 }

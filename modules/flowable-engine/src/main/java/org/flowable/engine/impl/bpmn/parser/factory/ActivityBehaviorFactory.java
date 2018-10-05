@@ -119,7 +119,7 @@ public interface ActivityBehaviorFactory {
 
     public abstract ManualTaskActivityBehavior createManualTaskActivityBehavior(ManualTask manualTask);
 
-    public abstract CaseTaskActivityBehavior createCaseTaskActivityBehavior(CaseTask caseTaskTask);
+    public abstract CaseTaskActivityBehavior createCaseTaskActivityBehavior(ServiceTask serviceTask);
 
     public abstract ReceiveTaskActivityBehavior createReceiveTaskActivityBehavior(ReceiveTask receiveTask);
 
