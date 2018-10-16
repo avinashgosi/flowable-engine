@@ -131,8 +131,6 @@ public class CmmnEngineConfigurator extends AbstractEngineConfigurator {
 
     protected void initProcessInstanceService(ProcessEngineConfigurationImpl processEngineConfiguration) {
         cmmnEngineConfiguration.setProcessInstanceService(new DefaultProcessInstanceService(processEngineConfiguration.getRuntimeService()));
-//        processEngineConfiguration.setCaseInstanceService(new DefaultCaseInstanceService(cmmnEngineConfiguration.getCmmnRuntimeService()));
-        processEngineConfiguration.setCmmnRuntimeService(cmmnEngineConfiguration.getCmmnRuntimeService());
     }
 
     protected void initProcessInstanceStateChangedCallbacks(ProcessEngineConfigurationImpl processEngineConfiguration) {

@@ -298,4 +298,9 @@ public abstract class AbstractEngineConfigurator implements EngineConfigurator {
         this.enableMybatisXmlMappingValidation = enableMybatisXmlMappingValidation;
     }
 
+    @Override
+    public void postConfiguration(AbstractEngineConfiguration engineConfiguration){
+        //Do Nothing
+    }
+
 }

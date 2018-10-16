@@ -12,8 +12,9 @@
  */
 package org.flowable.engine.impl.util;
 
-import org.flowable.cmmn.engine.CmmnEngineConfiguration;
-import org.flowable.cmmn.engine.impl.runtime.CaseInstanceHelper;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.flowable.common.engine.api.delegate.event.FlowableEventDispatcher;
 import org.flowable.common.engine.impl.context.Context;
 import org.flowable.common.engine.impl.db.DbSqlSession;
@@ -67,9 +68,6 @@ import org.flowable.task.service.TaskServiceConfiguration;
 import org.flowable.variable.service.HistoricVariableService;
 import org.flowable.variable.service.VariableService;
 import org.flowable.variable.service.VariableServiceConfiguration;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class CommandContextUtil {
     
@@ -162,14 +160,6 @@ public class CommandContextUtil {
     public static TaskServiceConfiguration getTaskServiceConfiguration(CommandContext commandContext) {
         return (TaskServiceConfiguration) getProcessEngineConfiguration(commandContext).getServiceConfigurations()
                         .get(EngineConfigurationConstants.KEY_TASK_SERVICE_CONFIG);
-    }
-
-    public static CaseInstanceHelper getCaseInstanceHelper(CommandContext commandContext) {
-        return getCmmnEngineConfiguration(commandContext).getCaseInstanceHelper();
-    }
-
-    public static CmmnEngineConfiguration getCmmnEngineConfiguration(CommandContext commandContext) {
-        return (CmmnEngineConfiguration) commandContext.getEngineConfigurations().get(EngineConfigurationConstants.KEY_CMMN_ENGINE_CONFIG);
     }
     
     public static TaskService getTaskService() {

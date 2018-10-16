@@ -1,5 +1,6 @@
 package org.flowable.engine.configurator.impl.process;
 
+import org.flowable.cmmn.api.CallbackTypes;
 import org.flowable.cmmn.api.CmmnRuntimeService;
 import org.flowable.cmmn.api.runtime.CaseInstance;
 import org.flowable.cmmn.api.runtime.CaseInstanceBuilder;
@@ -18,7 +19,7 @@ public class DefaultCaseInstanceService implements CaseInstanceService {
     }
 
     @Override
-    public String startCaseInstanceByKey(String caseDefinitionKey, String planItemInstanceId, String tenantId) {
+    public String startCaseInstanceByKey(String caseDefinitionKey, String executionId, String tenantId) {
 
         CaseInstanceBuilder caseInstanceBuilder = cmmnEngineRuntimeService.createCaseInstanceBuilder();
         caseInstanceBuilder.caseDefinitionKey(caseDefinitionKey);
@@ -27,10 +28,10 @@ public class DefaultCaseInstanceService implements CaseInstanceService {
             caseInstanceBuilder.tenantId(tenantId);
         }
 
-        /*if (planItemInstanceId != null) {
-            caseInstanceBuilder.callbackId(planItemInstanceId);
+        if (executionId != null) {
+            caseInstanceBuilder.callbackId(executionId);
             caseInstanceBuilder.callbackType(CallbackTypes.PLAN_ITEM_CHILD_CASE);
-        }*/
+        }
 
         CaseInstance caseInstance = caseInstanceBuilder.start();
 

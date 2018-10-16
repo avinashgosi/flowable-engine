@@ -147,7 +147,6 @@ public abstract class ProcessEngineConfiguration extends AbstractEngineConfigura
     /** postprocessor for a task builder */
     protected TaskPostProcessor taskPostProcessor = null;
 
-    protected CmmnRuntimeService cmmnRuntimeService;
     protected CaseInstanceService caseInstanceService;
 
     /** use one of the static createXxxx methods instead */
@@ -712,14 +711,6 @@ public abstract class ProcessEngineConfiguration extends AbstractEngineConfigura
 
     public void setTaskPostProcessor(TaskPostProcessor processor) {
         this.taskPostProcessor = processor;
-    }
-
-    public CmmnRuntimeService getCmmnRuntimeService(){
-        return this.cmmnRuntimeService;
-    }
-    public void setCmmnRuntimeService(CmmnRuntimeService cmmnRuntimeService){
-        this.cmmnRuntimeService = cmmnRuntimeService;
-//        this.setCaseInstanceService(new DefaultCaseInstanceService(cmmnRuntimeService));
     }
 
     public CaseInstanceService getCaseInstanceService(){

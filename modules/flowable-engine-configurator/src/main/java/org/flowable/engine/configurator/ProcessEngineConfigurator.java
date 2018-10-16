@@ -12,11 +12,14 @@
  */
 package org.flowable.engine.configurator;
 
+import org.flowable.cmmn.api.CallbackTypes;
 import org.flowable.cmmn.engine.CmmnEngineConfiguration;
+import org.flowable.cmmn.engine.impl.callback.ChildCaseInstanceStateChangeCallback;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.common.engine.impl.AbstractEngineConfiguration;
 import org.flowable.common.engine.impl.AbstractEngineConfigurator;
 import org.flowable.common.engine.impl.EngineDeployer;
+import org.flowable.common.engine.impl.callback.RuntimeInstanceStateChangeCallback;
 import org.flowable.common.engine.impl.db.DbSqlSessionFactory;
 import org.flowable.common.engine.impl.interceptor.EngineConfigurationConstants;
 import org.flowable.common.engine.impl.persistence.entity.Entity;
@@ -31,8 +34,11 @@ import org.flowable.identitylink.service.impl.persistence.entity.IdentityLinkEnt
 import org.flowable.variable.service.impl.persistence.entity.VariableByteArrayEntityImpl;
 import org.flowable.variable.service.impl.persistence.entity.VariableInstanceEntityImpl;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Tijs Rademakers
@@ -140,39 +146,16 @@ public class ProcessEngineConfigurator extends AbstractEngineConfigurator {
     protected void copyProcessEngineProperties(CmmnEngineConfiguration cmmnEngineConfiguration) {
         initCaseInstanceService(cmmnEngineConfiguration);
         initCaseInstanceStateChangedCallbacks(cmmnEngineConfiguration);
-
-        /*processEngineConfiguration.setEnableTaskRelationshipCounts(cmmnEngineConfiguration.getPerformanceSettings().isEnableTaskRelationshipCounts());
-        processEngineConfiguration.setTaskQueryLimit(cmmnEngineConfiguration.getTaskQueryLimit());
-        processEngineConfiguration.setHistoricTaskQueryLimit(cmmnEngineConfiguration.getHistoricTaskQueryLimit());
-        // use the same query limit for executions/processes and cases
-        processEngineConfiguration.setCaseQueryLimit(cmmnEngineConfiguration.getExecutionQueryLimit());
-        processEngineConfiguration.setHistoricCaseQueryLimit(cmmnEngineConfiguration.getHistoricProcessInstancesQueryLimit());
-
-        if (cmmnEngineConfiguration.isAsyncHistoryEnabled()) {
-            AsyncExecutor asyncHistoryExecutor = cmmnEngineConfiguration.getAsyncHistoryExecutor();
-
-            // Inject the async history executor from the process engine.
-            // The job handlers will be added in the CmmnEngineConfiguration itself
-            processEngineConfiguration.setAsyncHistoryEnabled(true);
-            processEngineConfiguration.setAsyncHistoryExecutor(asyncHistoryExecutor);
-            processEngineConfiguration.setAsyncHistoryJsonGroupingEnabled(cmmnEngineConfiguration.isAsyncHistoryJsonGroupingEnabled());
-            processEngineConfiguration.setAsyncHistoryJsonGroupingThreshold(cmmnEngineConfiguration.getAsyncHistoryJsonGroupingThreshold());
-            processEngineConfiguration.setAsyncHistoryJsonGzipCompressionEnabled(cmmnEngineConfiguration.isAsyncHistoryJsonGzipCompressionEnabled());
-
-            // See the beforeInit
-            ((CmmnEngineConfiguration) cmmnEngineConfiguration).setHistoryJobExecutionScope(JobServiceConfiguration.JOB_EXECUTION_SCOPE_ALL);
-        }*/
     }
 
     private void initCaseInstanceStateChangedCallbacks(CmmnEngineConfiguration cmmnEngineConfiguration) {
-        /*if (cmmnEngineConfiguration.getCaseInstanceStateChangeCallbacks() == null) {
+        if (cmmnEngineConfiguration.getCaseInstanceStateChangeCallbacks() == null) {
             cmmnEngineConfiguration.setCaseInstanceStateChangeCallbacks(new HashMap<>());
         }
         Map<String, List<RuntimeInstanceStateChangeCallback>> callbacks = cmmnEngineConfiguration.getCaseInstanceStateChangeCallbacks();
-        if (!callbacks.containsKey(CallbackTypes.PLAN_ITEM_CHILD_PROCESS)) {
-            callbacks.put(CallbackTypes.PLAN_ITEM_CHILD_PROCESS, new ArrayList<>());
+        if (!callbacks.containsKey(CallbackTypes.PLAN_ITEM_CHILD_CASE)) {
+            callbacks.put(CallbackTypes.PLAN_ITEM_CHILD_CASE, new ArrayList<>());
         }
-        callbacks.get(CallbackTypes.PLAN_ITEM_CHILD_PROCESS).add(new ChildCaseInstanceStateChangeCallback(processEngineConfiguration));*/
     }
 
     protected void initCaseInstanceService(CmmnEngineConfiguration cmmnEngineConfiguration) {

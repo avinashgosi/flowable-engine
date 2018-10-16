@@ -37,4 +37,9 @@ public abstract class AbstractProcessEngineConfigurator implements EngineConfigu
 
     }
 
+    @Override
+    public void postConfiguration(AbstractEngineConfiguration engineConfiguration){
+        //Do Nothing
+    }
+
 }

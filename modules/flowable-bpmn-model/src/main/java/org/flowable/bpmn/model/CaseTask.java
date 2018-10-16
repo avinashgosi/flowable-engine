@@ -17,20 +17,4 @@ package org.flowable.bpmn.model;
  */
 public class CaseTask extends ServiceTask {
 
-    /*protected String caseRef;
-
-    public String getCaseRef() {
-        return caseRef;
-    }
-
-    public void setCaseRef(String caseRef) {
-        this.caseRef = caseRef;
-    }
-
-    @Override
-    public CaseTask clone() {
-        CaseTask clone = new CaseTask();
-        clone.setValues(this);
-        return clone;
-    }*/
 }

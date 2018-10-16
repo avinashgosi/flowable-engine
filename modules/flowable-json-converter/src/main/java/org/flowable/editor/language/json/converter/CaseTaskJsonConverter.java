@@ -39,18 +39,11 @@ public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements Case
     }
 
     public static void fillBpmnTypes(Map<Class<? extends BaseElement>, Class<? extends BaseBpmnJsonConverter>> convertersToJsonMap) {
-//        convertersToJsonMap.put(CaseTask.class, CaseTaskJsonConverter.class);
     }
 
     @Override
     protected void convertElementToJson(ObjectNode propertiesNode, BaseElement baseElement) {
-        /*CaseTask caseTask = (CaseTask) baseElement;
-        ObjectNode caseRefNode = objectMapper.createObjectNode();
-        String caseModelKey = caseTask.getCaseRef();
-
-        caseRefNode.put("id", caseModelKey);
-
-        propertiesNode.set(PROPERTY_CASE_REFERENCE, caseRefNode);*/
+        // done in service task
     }
 
     @Override
@@ -69,16 +62,6 @@ public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements Case
                 task.getFieldExtensions().add(field);
             }
         }
-
-        /*JsonNode caseModelReferenceNode = getProperty(PROPERTY_CASE_REFERENCE, elementNode);
-        if (caseModelReferenceNode != null && caseModelReferenceNode.has("id") && !caseModelReferenceNode.get("id").isNull()) {
-
-            String caseModelId = caseModelReferenceNode.get("id").asText();
-            if (caseModelMap != null) {
-                String caseModelKey = caseModelMap.get(caseModelId);
-                task.setCaseRef(caseModelKey);
-            }
-        }*/
 
         return task;
     }

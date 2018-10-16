@@ -69,7 +69,7 @@ public class ServiceTaskValidator extends ExternalInvocationTaskValidator {
                 validateFieldDeclarationsForDmn(process, serviceTask, serviceTask.getFieldExtensions(), errors);
             } else if (serviceTask.getType().equalsIgnoreCase("http")) {
                 validateFieldDeclarationsForHttp(process, serviceTask, serviceTask.getFieldExtensions(), errors);
-            } else if (serviceTask.getType().equalsIgnoreCase("http")) {
+            } else if (serviceTask.getType().equalsIgnoreCase("case")) {
                 validateFieldDeclarationsForCase(process, serviceTask, serviceTask.getFieldExtensions(), errors);
             }
 

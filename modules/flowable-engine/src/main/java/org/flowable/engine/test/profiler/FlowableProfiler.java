@@ -56,6 +56,11 @@ public class FlowableProfiler implements EngineConfigurator {
         return 0;
     }
 
+    @Override
+    public void postConfiguration(AbstractEngineConfiguration engineConfiguration) {
+        // do Nothing
+    }
+
     public void reset() {
         if (currentProfileSession != null) {
             stopCurrentProfileSession();

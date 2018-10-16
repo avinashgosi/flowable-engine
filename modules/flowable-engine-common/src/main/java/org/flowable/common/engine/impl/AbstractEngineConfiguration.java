@@ -257,6 +257,7 @@ public abstract class AbstractEngineConfiguration {
     protected boolean enableConfiguratorServiceLoader = true; // Enabled by default. In certain environments this should be set to false (eg osgi)
     protected List<EngineConfigurator> configurators; // The injected configurators
     protected List<EngineConfigurator> allConfigurators; // Including auto-discovered configurators
+
     protected EngineConfigurator idmEngineConfigurator;
 
     public static final String DATABASE_TYPE_H2 = "h2";
@@ -857,6 +858,11 @@ public abstract class AbstractEngineConfiguration {
         for (EngineConfigurator configurator : allConfigurators) {
             LOGGER.info("Executing configure() of {} (priority:{})", configurator.getClass(), configurator.getPriority());
             configurator.configure(this);
+        }
+
+        for (EngineConfigurator configurator : allConfigurators) {
+            LOGGER.info("Executing PostConfiguration() of {} (priority:{})", configurator.getClass(), configurator.getPriority());
+            configurator.postConfiguration(this);
         }
     }    
 

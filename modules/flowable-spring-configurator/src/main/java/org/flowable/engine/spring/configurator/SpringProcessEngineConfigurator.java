@@ -47,20 +47,6 @@ public class SpringProcessEngineConfigurator extends ProcessEngineConfigurator {
                         springEngineConfiguration.getApplicationContext(), springEngineConfiguration.getBeans()));
 
 
-        SpringCmmnEngineConfiguration springCmmnEngineConfiguration = null;
-        if (springEngineConfiguration instanceof SpringCmmnEngineConfiguration) {
-            springCmmnEngineConfiguration = (SpringCmmnEngineConfiguration) springEngineConfiguration;
-        } else {
-            AbstractEngineConfiguration cmmnEngineConfiguration = engineConfiguration.getEngineConfigurations().get(EngineConfigurationConstants.KEY_CMMN_ENGINE_CONFIG);
-            if (cmmnEngineConfiguration instanceof SpringCmmnEngineConfiguration) {
-                springCmmnEngineConfiguration = (SpringCmmnEngineConfiguration) cmmnEngineConfiguration;
-            }
-        }
-
-        if (springCmmnEngineConfiguration != null) {
-            copyProcessEngineProperties(springCmmnEngineConfiguration);
-        }
-
         initProcessEngine();
 
         initServiceConfigurations(engineConfiguration, processEngineConfiguration);
@@ -78,6 +64,24 @@ public class SpringProcessEngineConfigurator extends ProcessEngineConfigurator {
     @Override
     public SpringProcessEngineConfiguration getProcessEngineConfiguration() {
         return (SpringProcessEngineConfiguration) processEngineConfiguration;
+    }
+
+    @Override
+    public void postConfiguration(AbstractEngineConfiguration engineConfiguration){
+        SpringEngineConfiguration springEngineConfiguration = (SpringEngineConfiguration) engineConfiguration;
+        SpringCmmnEngineConfiguration springCmmnEngineConfiguration = null;
+        if (springEngineConfiguration instanceof SpringCmmnEngineConfiguration) {
+            springCmmnEngineConfiguration = (SpringCmmnEngineConfiguration) springEngineConfiguration;
+        } else {
+            AbstractEngineConfiguration cmmnEngineConfiguration = engineConfiguration.getEngineConfigurations().get(EngineConfigurationConstants.KEY_CMMN_ENGINE_CONFIG);
+            if (cmmnEngineConfiguration instanceof SpringCmmnEngineConfiguration) {
+                springCmmnEngineConfiguration = (SpringCmmnEngineConfiguration) cmmnEngineConfiguration;
+            }
+        }
+
+        if (springCmmnEngineConfiguration != null) {
+            copyProcessEngineProperties(springCmmnEngineConfiguration);
+        }
     }
 
     public SpringProcessEngineConfigurator setProcessEngineConfiguration(SpringProcessEngineConfiguration processEngineConfiguration) {

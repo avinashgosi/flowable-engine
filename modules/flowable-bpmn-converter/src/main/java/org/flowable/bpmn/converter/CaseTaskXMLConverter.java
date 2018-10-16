@@ -22,26 +22,4 @@ public class CaseTaskXMLConverter extends ServiceTaskXMLConverter {
         return CaseTask.class;
     }
 
-    /*@Override
-    protected BaseElement convertXMLToElement(XMLStreamReader xtr, BpmnModel model) throws Exception {
-
-        CaseTask caseTask = new CaseTask();
-        String caseRef = BpmnXMLUtil.getAttributeValue(ATTRIBUTE_CASE_REF, xtr);
-
-        caseTask.setCaseRef(caseRef);
-
-        return caseTask;
-    }
-
-    @Override
-    protected void writeAdditionalAttributes(BaseElement element, BpmnModel model, XMLStreamWriter xtw) throws Exception {
-
-        CaseTask caseTask = (CaseTask) element;
-        BpmnXMLUtil.writeQualifiedAttribute(ATTRIBUTE_CASE_REF, caseTask.getCaseRef(), xtw);
-    }
-
-    @Override
-    protected void writeAdditionalChildElements(BaseElement element, BpmnModel model, XMLStreamWriter xtw) throws Exception {
-
-    }*/
 }

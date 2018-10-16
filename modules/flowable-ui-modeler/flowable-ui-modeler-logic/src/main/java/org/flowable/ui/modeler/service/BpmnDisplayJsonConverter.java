@@ -12,12 +12,10 @@
  */
 package org.flowable.ui.modeler.service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.flowable.bpmn.model.Artifact;
 import org.flowable.bpmn.model.Association;
@@ -43,7 +41,6 @@ import org.flowable.bpmn.model.TimerEventDefinition;
 import org.flowable.editor.language.json.converter.BpmnJsonConverter;
 import org.flowable.editor.language.json.converter.util.CollectionUtils;
 import org.flowable.ui.modeler.domain.AbstractModel;
-import org.flowable.ui.modeler.service.mapper.CaseTaskInfoMapper;
 import org.flowable.ui.modeler.service.mapper.EventInfoMapper;
 import org.flowable.ui.modeler.service.mapper.InfoMapper;
 import org.flowable.ui.modeler.service.mapper.ReceiveTaskInfoMapper;
@@ -54,10 +51,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class BpmnDisplayJsonConverter {
@@ -86,7 +84,6 @@ public class BpmnDisplayJsonConverter {
         propertyMappers.put("ServiceTask", new ServiceTaskInfoMapper());
         propertyMappers.put("ThrowEvent", new EventInfoMapper());
         propertyMappers.put("UserTask", new UserTaskInfoMapper());
-//        propertyMappers.put("CaseTask", new CaseTaskInfoMapper());
     }
 
     public void processProcessElements(AbstractModel processModel, ObjectNode displayNode, GraphicInfo diagramInfo) {

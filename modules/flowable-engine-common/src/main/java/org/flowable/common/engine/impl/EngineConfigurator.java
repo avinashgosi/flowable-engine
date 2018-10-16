@@ -48,4 +48,6 @@ public interface EngineConfigurator {
      */
     int getPriority();
 
+    void postConfiguration(AbstractEngineConfiguration engineConfiguration);
+
 }
