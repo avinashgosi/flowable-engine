@@ -54,7 +54,7 @@ public class CaseTaskJsonConverter extends BaseBpmnJsonConverter implements Case
         FieldExtension field = new FieldExtension();
         field.setFieldName("caseref");
         JsonNode caseModelReferenceNode = getProperty(PROPERTY_CASE_REFERENCE, elementNode);
-        if (caseModelReferenceNode != null && caseModelReferenceNode.has("id") && !caseModelReferenceNode.get("id").isNull()) {
+        if (null != caseModelMap && caseModelReferenceNode != null && caseModelReferenceNode.has("id") && !caseModelReferenceNode.get("id").isNull()) {
             String caseModelId = caseModelReferenceNode.get("id").asText();
             if (StringUtils.isNotEmpty(caseModelId)) {
                 String caseModelKey = caseModelMap.get(caseModelId);

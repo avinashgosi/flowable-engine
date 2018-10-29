@@ -31,6 +31,7 @@ import org.flowable.bpmn.model.BoundaryEvent;
 import org.flowable.bpmn.model.BpmnModel;
 import org.flowable.bpmn.model.BusinessRuleTask;
 import org.flowable.bpmn.model.CallActivity;
+import org.flowable.bpmn.model.CaseTask;
 import org.flowable.bpmn.model.CompensateEventDefinition;
 import org.flowable.bpmn.model.EndEvent;
 import org.flowable.bpmn.model.ErrorEventDefinition;
@@ -220,6 +221,8 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
                     processDiagramCanvas.drawDMNTask(serviceTask.getName(), graphicInfo, scaleFactor);
                 } else if (ServiceTask.SHELL_TASK.equalsIgnoreCase(serviceTask.getType())) {
                     processDiagramCanvas.drawShellTask(serviceTask.getName(), graphicInfo, scaleFactor);
+                } else if (ServiceTask.CASE_TASK.equalsIgnoreCase(serviceTask.getType())) {
+                    processDiagramCanvas.drawCaseTask(serviceTask.getName(), graphicInfo, scaleFactor);
                 } else {
                     processDiagramCanvas.drawServiceTask(serviceTask.getName(), graphicInfo, scaleFactor);
                 }
@@ -233,6 +236,16 @@ public class DefaultProcessDiagramGenerator implements ProcessDiagramGenerator {
             public void draw(DefaultProcessDiagramCanvas processDiagramCanvas, BpmnModel bpmnModel, FlowNode flowNode) {
                 GraphicInfo graphicInfo = bpmnModel.getGraphicInfo(flowNode.getId());
                 processDiagramCanvas.drawHttpTask(flowNode.getName(), graphicInfo, scaleFactor);
+            }
+        });
+
+        // case service task
+        activityDrawInstructions.put(CaseTask.class, new ActivityDrawInstruction() {
+
+            @Override
+            public void draw(DefaultProcessDiagramCanvas processDiagramCanvas, BpmnModel bpmnModel, FlowNode flowNode) {
+                GraphicInfo graphicInfo = bpmnModel.getGraphicInfo(flowNode.getId());
+                processDiagramCanvas.drawCaseTask(flowNode.getName(), graphicInfo, scaleFactor);
             }
         });
 
