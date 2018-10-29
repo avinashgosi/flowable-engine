@@ -20,6 +20,7 @@ import org.flowable.bpmn.model.ServiceTask;
 import org.flowable.common.engine.api.FlowableException;
 import org.flowable.engine.cmmn.CaseInstanceService;
 import org.flowable.engine.delegate.DelegateExecution;
+import org.flowable.engine.impl.delegate.SubProcessActivityBehavior;
 import org.flowable.engine.impl.util.CommandContextUtil;
 import org.flowable.task.service.impl.persistence.entity.TaskEntity;
 
@@ -28,7 +29,7 @@ import java.util.List;
 /**
  * @author Avinash Gosi
  */
-public class CaseTaskActivityBehavior extends TaskActivityBehavior {
+public class CaseTaskActivityBehavior extends AbstractBpmnActivityBehavior implements SubProcessActivityBehavior {
 
     private static final long serialVersionUID = 1L;
 
@@ -59,7 +60,7 @@ public class CaseTaskActivityBehavior extends TaskActivityBehavior {
 
         String processInstanceId = caseInstanceService.startCaseInstanceByKey(externalRef, null);
 
-        leave(execution);
+        //leave(execution);
     }
 
     @Override
@@ -71,6 +72,17 @@ public class CaseTaskActivityBehavior extends TaskActivityBehavior {
             }
         }
 
+        leave(execution);
+    }
+
+    @Override
+    public void completing(DelegateExecution execution, DelegateExecution subProcessInstance) throws Exception {
+
+    }
+
+    @Override
+    public void completed(DelegateExecution execution) throws Exception {
+        // only control flow. no sub process instance data available
         leave(execution);
     }
 
